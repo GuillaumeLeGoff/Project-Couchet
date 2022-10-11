@@ -1,0 +1,73 @@
+.Loading {
+  color: rgb(26, 56, 138);
+}
+
+.Wait {
+  color: rgb(221, 201, 18);
+}
+
+.Come {
+  color: green;
+  animation: clignote 2s linear infinite;
+}
+
+@keyframes clignote {
+  50% {
+    opacity: 0;
+  }
+}
+
+.Truck {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.Media {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.NavBarre {
+  box-shadow: 1px 1px 5px #c1c2c3;
+}
+
+.Inputtruck {
+  height: 30%;
+}
+
+.LoginMargin {
+  margin-right: 20%;
+  margin-left: 20%;
+}
+
+.Logout {
+  background: transparent;
+  border: none !important;
+}
+
+.Timer {
+  width: 10%;
+  display: inline;
+}
+
+.FullScreenSave {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+.Column {
+  margin: 20px;
+  box-shadow: 1px 1px 5px #c1c2c3;
+  background: white;
+}
+
+.ButtonUp {
+  padding-bottom: 5px;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
