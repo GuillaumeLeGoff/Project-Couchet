@@ -4,11 +4,11 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
-import { FaArrowUp } from "react-icons/fa";
+import { FaArrowUp, FaSave } from "react-icons/fa";
 import { useImmer } from "use-immer";
 import '../../styles/Main.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { } from 'react';
+import React, { useEffect } from 'react';
 import Come from '../State/Come';
 import Loading from '../State/Loading';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
@@ -17,96 +17,25 @@ import Loading from '../State/Loading';
 
 
 function Truck() {
-
-    var [LoadingTruck, setLoadingTruck] = useImmer([
-        {
-            id: 0,
-            dock: 13,
-            dockvalue: "",
-            state: '',
-        },
-        {
-            id: 1,
-            dock: 14,
-            dockvalue: '',
-            state: '',
-            value: false
-        },
-        {
-            id: 2,
-            dock: 15,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 3,
-            dock: 16,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 4,
-            dock: 17,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 5,
-            dock: 18,
-            dockvalue: '',
-            state: '',
-        }
-    ]);
-    var [NextTruck, setNextTruck] = useImmer([
-        {
-            id: 0,
-            dock: 13,
-            dockvalue: "",
-            state: '',
-        },
-        {
-            id: 1,
-            dock: 14,
-            dockvalue: '',
-            state: '',
-        },
-        {
-            id: 2,
-            dock: 15,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 3,
-            dock: 16,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 4,
-            dock: 17,
-            dockvalue: '',
-            state: '',
-        }
-        ,
-        {
-            id: 5,
-            dock: 18,
-            dockvalue: '',
-            state: '',
-        }
-    ]);
+    const URL_API = "http://localhost:4000"
+    useEffect(() => {
+        getTruck();
+    }, []);
+    var [LoadingTruck, setLoadingTruck] = useImmer([]);
+    var [NextTruck, setNextTruck] = useImmer([]);
 
     function HandleToggleNext(e, docks) {
         const id = docks.id
         setNextTruck((draft) => {
             const dock = draft.find((dock) => dock.id === id);
-            dock.dockvalue = e.target.value;
+            dock.plate = e.target.value;
+        });
+    }
+    function HandleToggleNextDock(e, docks) {
+        const id = docks.id
+        setNextTruck((draft) => {
+            const dock = draft.find((dock) => dock.id === id);
+            dock.dockIndex = e.target.value;
         });
     }
 
@@ -114,63 +43,73 @@ function Truck() {
         const id = docks.id
         setLoadingTruck((draft) => {
             const dock = draft.find((dock) => dock.id === id);
-            dock.dockvalue = e.target.value;
+            dock.plate = e.target.value;
+        });
+    }
+    function HandleToggleLoadingDock(e, docks) {
+        const id = docks.id
+        setLoadingTruck((draft) => {
+            const dock = draft.find((dock) => dock.id === id);
+            dock.dockIndex = e.target.value;
         });
     }
 
     function MoveLoadingToNext(e, docks) {
-        const id = docks.id
+        var id = docks.id;
+        var id2 = docks.id;
+        id2 = id2 - 6;
+         setNextTruck((draft) => {
+            const dock = draft.find((dock) => dock.id === id);
+            dock.plate = ""
+            dock.dockIndex = ""
+        }); 
+
         setLoadingTruck((draft) => {
-            const dock = draft.find((dock) => dock.id === id);
-            dock.dockvalue = NextTruck[id].dockvalue;
-            dock.state = <Come />;
-
-            setTimeout(() => {
-                console.log('you can see me after 2 seconds')
-            }, 2000);
-            dock.state = <Loading />;
-
-        });
-
-        setNextTruck((draft) => {
-            const dock = draft.find((dock) => dock.id === id);
-            dock.dockvalue = "";
-            dock.state = "";
-        });
+            const dock = draft.find((dock) => dock.id === id2);
+            dock.plate = NextTruck[id2].plate;
+            dock.dockIndex = NextTruck[id2].dockIndex;
+            dock.state =  <Come/>;
+            dock.state =  <Loading/>;
+        }); 
     }
-
-    const submitUser = async (e) => {
-        e.preventDefault();
-        const userdata = {
+    async function getTruck() {
+        const data = {
         };
         await axios
-            .post(
-                "",
-                JSON.stringify(userdata)
+            .get(
+                URL_API + "/trucks",
+                JSON.stringify(data)
             )
             .then((result) => {
-                console.log(result.data);
-                console.log(result.data.msg);
+
+                setLoadingTruck(result.data.slice(0, 6));
+                setNextTruck(result.data.slice(6, 12));
+                console.log(result.data.slice(6, 12));
+                console.log(result.data.slice(0, 6));
             });
     }
-
-    // Third Attempts
-
-
-
-    /* const [post, setPost] = React.useState(null); */
-
-    /* React.useEffect(() => {
-        axios.get("http://localhost/devopsdeveloper/user/adduser").then((response) => {
-            setPost(response.data);
-        });
-    }, []);  */
+    async function postTruck() {
+        const data = {
+            data: {
+                id: 0,
+                dockIndex: 13,
+                plate: 'test',
+                state: 'come',
+            }
+        };
+        console.log(data);
+        axios.post(URL_API + "/trucks:0", { data })
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+            });
+    }
 
 
     return (
 
         <div className="Truck">
-            <Form onSubmit={submitUser}>
+            <Form >
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -179,11 +118,12 @@ function Truck() {
                             <th>State</th>
                         </tr>
                     </thead>
+
                     {LoadingTruck.map(docks => (
                         <tbody>
                             <tr>
-                                <td key={docks.dock}>{docks.dock}</td>
-                                <td><Form.Control className="Inputtruck" onChange={(e) => HandleToggleLoading(e, docks)} value={docks.dockvalue} /></td>
+                                <td> <Form.Control className="Inputtruck" onChange={(e) => HandleToggleLoadingDock(e, docks)} value={docks.dockIndex}/>  </td>
+                                <td><Form.Control className="Inputtruck" onChange={(e) => HandleToggleLoading(e, docks)} value={docks.plate} /></td>
                                 <td>{docks.state}</td>
                             </tr>
                         </tbody>
@@ -201,16 +141,18 @@ function Truck() {
                     {NextTruck.map(docks => (
                         <tbody>
                             <tr>
-                                <td key={docks.id}>{docks.dock}</td>
-                                <td><Form.Control className="Inputtruck" onChange={(e) => HandleToggleNext(e, docks)} value={docks.dockvalue} /></td>
+                            <td> <Form.Control className="Inputtruck" onChange={(e) => HandleToggleNextDock(e, docks)} value={docks.dockIndex}/>  </td>
+                                <td><Form.Control className="Inputtruck" onChange={(e) => HandleToggleNext(e, docks)} value={docks.plate} /></td>
                                 <td>{docks.state}</td>
-                                <td><Button className="ButtonUp" button onClick={(e) => MoveLoadingToNext(e, docks)} variant="primary" disabled><FaArrowUp /></Button></td>
+                                <td><Button className="ButtonUp" button onClick={(e) => MoveLoadingToNext(e, docks)} variant="primary" ><FaArrowUp /></Button></td>
 
                             </tr>
                         </tbody>
                     ))}
                 </Table>
+                <Button className='FullScreenSave' variant="primary" type="submit" ><FaSave /></Button>
             </Form>
+            <Button onClick={postTruck} ><FaSave /></Button>
 
 
 
