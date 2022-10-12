@@ -1,30 +1,41 @@
 
-import Header from "./Header";
 import Login from "./Login/Login";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Routes,
-  Link,
-  Route,
-} from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/App.css";
 import { useState } from "react";
 import Dashboard from "./dashboard/Dashboard";
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+import { Route, Routes } from "react-router-dom";
 
-  function childToParent(childdata) {
-    setIsLoggedIn(childdata);
-    console.log(isLoggedIn);
+function App() {
+  const [token, setToken] = useState();
+  
+  
+  if(token) {
+    return <Login setToken={setToken} />
   }
   return (
     <div className="App">
-      <Header/>
-      <Dashboard/>
+      <ul>
+        <li>
+          {" "}
+          <a href="/dashboard">Dashboard</a>{" "}
+        </li>
+        <li>
+          {" "}
+          <a href="/login">Login</a>{" "}
+        </li>
+      </ul>
+
+
+
+
+      <Routes>
+          <Route path="/login" element={<Login/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
+      </Routes>
+
       {/* <div className="menu">
         <ul>
           <li>

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
 function FullScreen() {
-    const URL_API = "http://localhost:4000";
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const changeHandler = (event) => {

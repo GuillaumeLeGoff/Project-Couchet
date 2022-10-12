@@ -17,9 +17,11 @@ import Wait from "./State/Wait";
 
 function Truck() {
   const URL_API = "http://localhost:4000";
+  
   useEffect(() => {
     getTruck();
   }, []);
+
   var [LoadingTruck, setLoadingTruck] = useImmer([]);
   var [NextTruck, setNextTruck] = useImmer([]);
 
@@ -68,6 +70,9 @@ function Truck() {
       const dock = draft.find((dock) => dock.id === id2);
       dock.plate = NextTruck[id2].plate;
       dock.dockIndex = NextTruck[id2].dockIndex;
+      dock.state= false
+      setTimeout(function () {
+        dock.state= true}, 5000);
     });
     console.log(LoadingTruck);
   }
