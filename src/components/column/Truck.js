@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect } from "react";
 import Come from "../State/Come";
 import Loading from "../State/Loading";
+import Wait from "../State/Wait";
 <link
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
   rel="stylesheet"
@@ -66,9 +67,8 @@ function Truck() {
       const dock = draft.find((dock) => dock.id === id2);
       dock.plate = NextTruck[id2].plate;
       dock.dockIndex = NextTruck[id2].dockIndex;
-      dock.state = <Come />;
-      dock.state = <Loading />;
     });
+    console.log(LoadingTruck);
   }
   async function getTruck() {
     const data = {};
@@ -82,24 +82,31 @@ function Truck() {
       });
   }
   async function postTruck() {
-    axios
-      .put(
-        URL_API + "/truck/63456792d63187cba68d3ffa",
-        {
-          id: 85,
-          dockIndex: 100,
-          plate: "test",
-          state: true,
-        },
-        {
-          params: {
-            TruckId: "63456792d63187cba68d3ffa",
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        console.log(res.data);
+    LoadingTruck.forEach((truck) => {
+      axios
+        .put(URL_API + "/truck/" + truck._id, {
+          id: truck.id,
+          dockIndex: truck.dockIndex,
+          plate: truck.plate,
+          state: truck.state,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data);
+        });
+    });
+    NextTruck.forEach((truck) => {
+        axios
+          .put(URL_API + "/truck/" + truck._id, {
+            id: truck.id,
+            dockIndex: truck.dockIndex,
+            plate: truck.plate,
+            state: truck.state,
+          })
+          .then((res) => {
+            console.log(res);
+            console.log(res.data);
+          });
       });
   }
 
@@ -133,7 +140,7 @@ function Truck() {
                     value={docks.plate}
                   />
                 </td>
-                <td>{docks.state}</td>
+                <td>{docks.state ? <Loading/> : <Come/>}</td>
               </tr>
             </tbody>
           ))}
@@ -165,7 +172,7 @@ function Truck() {
                     value={docks.plate}
                   />
                 </td>
-                <td>{docks.state}</td>
+                <td>{docks.plate.length >0  ? <Wait/> : ''}</td>
                 <td>
                   <Button
                     className="ButtonUp"
@@ -180,9 +187,7 @@ function Truck() {
             </tbody>
           ))}
         </Table>
-        <Button className="FullScreenSave" variant="primary" type="submit">
-          <FaSave />
-        </Button>
+
       </Form>
       <Button onClick={postTruck}>
         <FaSave />

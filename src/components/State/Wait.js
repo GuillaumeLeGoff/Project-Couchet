@@ -4,7 +4,7 @@ import '../../styles/Main.css';
 function Wait() {
   return (
     <div >
-     <span className="Wait">Wait</span>
+     <span className="Wait">WAIT</span>
     </div>
   );
 }
