@@ -2,12 +2,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState } from 'react';
-import '../../styles/Main.css'
+import '../../../../styles/Main.css'
 
 import Nav from 'react-bootstrap/Nav';
-import SplitScreen from '../modeScreen/SplitScreen';
-import TimeScreen from '../modeScreen/TimeScreen';
-import FullScreen from '../modeScreen/FullScreen';
+import SplitScreen from './modeMedia/SplitScreen';
+import TimeScreen from './modeMedia/TimeScreen';
+import FullScreen from './modeMedia/FullScreen';
 
 function Media() {
     const [option, setOption] = useState(<SplitScreen />);

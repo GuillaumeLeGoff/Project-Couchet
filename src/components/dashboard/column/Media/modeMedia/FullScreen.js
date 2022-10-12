@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
 function FullScreen() {
+    const URL_API = "http://localhost:4000";
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const changeHandler = (event) => {
@@ -13,20 +14,17 @@ function FullScreen() {
 
     formData.append("File", selectedFile);
 
-    fetch(
-      "http://freeimage.host/api/1/upload/?key=6d207e02198a847aa98d0a2a901485a5",
-      {
-        method: "POST",
-        body: formData,
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Success:", result);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    /* axios
+    .put(URL_API + "/truck/" + truck._id, {
+      id: truck.id,
+      dockIndex: truck.dockIndex,
+      plate: truck.plate,
+      state: truck.state,
+    })
+    .then((res) => {
+      console.log(res);
+      console.log(res.data);
+    }); */
   };
   return (
     <div>

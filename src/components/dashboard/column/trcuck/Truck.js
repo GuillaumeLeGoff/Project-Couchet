@@ -4,12 +4,12 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { FaArrowUp, FaSave } from "react-icons/fa";
 import { useImmer } from "use-immer";
-import "../../styles/Main.css";
+import "../../../../styles/Main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect } from "react";
-import Come from "../State/Come";
-import Loading from "../State/Loading";
-import Wait from "../State/Wait";
+import Come from "./State/Come";
+import Loading from "./State/Loading";
+import Wait from "./State/Wait";
 <link
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
   rel="stylesheet"
@@ -34,10 +34,11 @@ function Truck() {
     const id = docks.id;
     setNextTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id);
+
       dock.dockIndex = e.target.value;
     });
+    console.log(NextTruck);
   }
-
   function HandleToggleLoading(e, docks) {
     const id = docks.id;
     setLoadingTruck((draft) => {
@@ -60,7 +61,7 @@ function Truck() {
     setNextTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id);
       dock.plate = "";
-      dock.dockIndex = "";
+      dock.dockIndex = 0;
     });
 
     setLoadingTruck((draft) => {
@@ -70,6 +71,7 @@ function Truck() {
     });
     console.log(LoadingTruck);
   }
+  
   async function getTruck() {
     const data = {};
     await axios
@@ -96,18 +98,18 @@ function Truck() {
         });
     });
     NextTruck.forEach((truck) => {
-        axios
-          .put(URL_API + "/truck/" + truck._id, {
-            id: truck.id,
-            dockIndex: truck.dockIndex,
-            plate: truck.plate,
-            state: truck.state,
-          })
-          .then((res) => {
-            console.log(res);
-            console.log(res.data);
-          });
-      });
+      axios
+        .put(URL_API + "/truck/" + truck._id, {
+          id: truck.id,
+          dockIndex: truck.dockIndex,
+          plate: truck.plate,
+          state: truck.state,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data);
+        });
+    });
   }
 
   return (
@@ -129,6 +131,7 @@ function Truck() {
                   {" "}
                   <Form.Control
                     className="Inputtruck"
+                    type="number"
                     onChange={(e) => HandleToggleLoadingDock(e, docks)}
                     value={docks.dockIndex}
                   />{" "}
@@ -140,7 +143,7 @@ function Truck() {
                     value={docks.plate}
                   />
                 </td>
-                <td>{docks.state ? <Loading/> : <Come/>}</td>
+                <td>{docks.state ? <Loading /> : <Come />}</td>
               </tr>
             </tbody>
           ))}
@@ -161,6 +164,7 @@ function Truck() {
                   {" "}
                   <Form.Control
                     className="Inputtruck"
+                    type="number"
                     onChange={(e) => HandleToggleNextDock(e, docks)}
                     value={docks.dockIndex}
                   />{" "}
@@ -172,11 +176,10 @@ function Truck() {
                     value={docks.plate}
                   />
                 </td>
-                <td>{docks.plate.length >0  ? <Wait/> : ''}</td>
+                <td>{docks.plate ? <Wait /> : ""}</td>
                 <td>
                   <Button
                     className="ButtonUp"
-                    button
                     onClick={(e) => MoveLoadingToNext(e, docks)}
                     variant="primary"
                   >
@@ -187,7 +190,6 @@ function Truck() {
             </tbody>
           ))}
         </Table>
-
       </Form>
       <Button onClick={postTruck}>
         <FaSave />

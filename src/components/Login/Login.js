@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/Main.css';
+import '../../styles/Main.css';
 import React from 'react';
 import { Button, Form } from 'react-bootstrap';
 

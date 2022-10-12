@@ -1,6 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../styles/Main.css';
-
+import '../../../../../styles/Main.css';
 function Wait() {
   return (
     <div >
