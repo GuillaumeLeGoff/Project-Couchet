@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import AuthService from "../../services/authService";
-import authService from "../../services/authService";
-
 const required = (value) => {
   if (!value) {
     return (

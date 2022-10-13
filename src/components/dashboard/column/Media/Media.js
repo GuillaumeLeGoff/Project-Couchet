@@ -9,7 +9,7 @@ import TimeScreen from "./modeMedia/TimeScreen";
 import FullScreen from "./modeMedia/FullScreen";
 import { useImmer } from "use-immer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Button, Form, Table } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
 function Media() {
   const [ModeChoice, setModeChoice] = useState(0);

@@ -6,7 +6,7 @@ import { FaArrowUp, FaSave } from "react-icons/fa";
 import { useImmer } from "use-immer";
 import "../../../../styles/Main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Come from "./State/Come";
 import Loading from "./State/Loading";
 import Wait from "./State/Wait";
@@ -20,8 +20,6 @@ function Truck() {
   
   useEffect(() => {
     getTruck();
-
-    
   }, []);
 
   var [LoadingTruck, setLoadingTruck] = useImmer([]);
