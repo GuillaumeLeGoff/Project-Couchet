@@ -2,14 +2,24 @@ import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
 import { FaSave } from "react-icons/fa";
-function Normale() {
+function Normale({ ModeChoice,setModeChoice}) {
   const dragItem = useRef();
   const dragOverItem = useRef();
 
   var [SplitScreen, setSplitScreen] = useImmer([
     {
       id: 0,
-      fileName: "file test",
+      fileName: "file 1",
+      file: "salut",
+    },
+    {
+      id: 2,
+      fileName: "file 2",
+      file: "salut",
+    },
+    {
+      id: 3,
+      fileName: "file 3",
       file: "salut",
     },
   ]);
@@ -37,7 +47,7 @@ function Normale() {
   ////////////////////////////////////////////////
 
   //////////////////OPTION FILE///////////////////
-  function NewFile() {
+  /* function NewFile() {
     setSplitScreen((draft) => {
       draft.push({
         id: "file_" + Math.random(),
@@ -46,14 +56,15 @@ function Normale() {
         Time: 0,
       });
     });
-  }
+  } */
 
   function DeleteFile(e, file) {
     const id = file.id;
 
     setSplitScreen((draft) => {
       const file1 = draft.findIndex((file1) => file1.id === id);
-      draft.splice(file1, 1);
+
+      
     });
   }
   /////////////////////////////////////////////////
@@ -92,12 +103,12 @@ function Normale() {
             ))}
         </Table>
       </Form>
-      <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
+      <Button variant="primary" type="submit" onClick={() => setModeChoice(1) }>
+        Active
+      </Button>
+      {/* <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
         Ajouter Document
-      </Button>
-      <Button className="FullScreenSave" variant="primary" type="submit">
-        <FaSave />
-      </Button>
+      </Button> */}
     </div>
   );
 }

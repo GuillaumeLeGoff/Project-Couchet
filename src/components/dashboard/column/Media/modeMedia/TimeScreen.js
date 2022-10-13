@@ -2,7 +2,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { FaSave } from "react-icons/fa";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
-function MultiScreen() {
+function MultiScreen({ ModeChoice, setModeChoice }) {
   const dragItem = useRef();
   const dragOverItem = useRef();
   ///////////////////////DATA//////////////////////
@@ -115,8 +115,8 @@ function MultiScreen() {
       <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
         Ajouter Document
       </Button>
-      <Button className="FullScreenSave" variant="primary" type="submit">
-        <FaSave />
+      <Button variant="primary" type="submit" onClick={() => setModeChoice(3)}>
+        Active
       </Button>
     </div>
   );

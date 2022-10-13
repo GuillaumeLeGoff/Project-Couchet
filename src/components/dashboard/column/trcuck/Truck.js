@@ -6,7 +6,7 @@ import { FaArrowUp, FaSave } from "react-icons/fa";
 import { useImmer } from "use-immer";
 import "../../../../styles/Main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Come from "./State/Come";
 import Loading from "./State/Loading";
 import Wait from "./State/Wait";
@@ -20,11 +20,15 @@ function Truck() {
   
   useEffect(() => {
     getTruck();
+
+    
   }, []);
 
   var [LoadingTruck, setLoadingTruck] = useImmer([]);
   var [NextTruck, setNextTruck] = useImmer([]);
-
+  const delay = ms => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
   function HandleToggleNext(e, docks) {
     const id = docks.id;
     setNextTruck((draft) => {
@@ -56,7 +60,7 @@ function Truck() {
     });
   }
 
-  function MoveLoadingToNext(e, docks) {
+  async function MoveLoadingToNext(e, docks) {
     var id = docks.id;
     var id2 = docks.id;
     id2 = id2 - 6;
@@ -64,19 +68,25 @@ function Truck() {
       const dock = draft.find((dock) => dock.id === id);
       dock.plate = "";
       dock.dockIndex = 0;
+      postTruck(dock)
     });
 
-    setLoadingTruck((draft) => {
+    setLoadingTruck( (draft) => {
       const dock = draft.find((dock) => dock.id === id2);
       dock.plate = NextTruck[id2].plate;
       dock.dockIndex = NextTruck[id2].dockIndex;
       dock.state= false
-      setTimeout(function () {
-        dock.state= true}, 5000);
+      postTruck(dock)
     });
-    console.log(LoadingTruck);
+    await delay(120000);
+    setLoadingTruck( (draft) => {
+      const dock = draft.find((dock) => dock.id === id2);
+      dock.state= true
+      postTruck(dock)
+    });
+    
   }
-  
+
   async function getTruck() {
     const data = {};
     await axios
@@ -88,22 +98,16 @@ function Truck() {
         console.log(result.data.slice(0, 6));
       });
   }
-  async function postTruck() {
+  async function postTrucks() {
     LoadingTruck.forEach((truck) => {
-      axios
-        .put(URL_API + "/truck/" + truck._id, {
-          id: truck.id,
-          dockIndex: truck.dockIndex,
-          plate: truck.plate,
-          state: truck.state,
-        })
-        .then((res) => {
-          console.log(res);
-          console.log(res.data);
-        });
+      postTruck(truck)
     });
     NextTruck.forEach((truck) => {
-      axios
+      postTruck(truck)
+    });
+  }
+  async function postTruck(truck){
+    axios
         .put(URL_API + "/truck/" + truck._id, {
           id: truck.id,
           dockIndex: truck.dockIndex,
@@ -114,7 +118,6 @@ function Truck() {
           console.log(res);
           console.log(res.data);
         });
-    });
   }
 
   return (
@@ -196,7 +199,7 @@ function Truck() {
           ))}
         </Table>
       </Form>
-      <Button onClick={postTruck}>
+      <Button onClick={postTrucks}>
         <FaSave />
       </Button>
     </div>

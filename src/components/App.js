@@ -17,7 +17,7 @@ function App() {
   }
   return (
     <div className="App">
-      <ul>
+      {/* <ul>
         <li>
           {" "}
           <a href="/dashboard">Dashboard</a>{" "}
@@ -26,7 +26,7 @@ function App() {
           {" "}
           <a href="/login">Login</a>{" "}
         </li>
-      </ul>
+      </ul> */}
 
 
 

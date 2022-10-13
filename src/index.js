@@ -1,11 +1,15 @@
+import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
-
+<link href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet" />;
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+    
     <BrowserRouter>
     <App />
     </BrowserRouter>

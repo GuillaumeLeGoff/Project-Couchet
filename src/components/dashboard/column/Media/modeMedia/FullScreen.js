@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Table } from "react-bootstrap";
 
-function FullScreen() {
+function FullScreen({ ModeChoice,setModeChoice}) {
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const changeHandler = (event) => {
@@ -25,24 +25,39 @@ function FullScreen() {
       console.log(res.data);
     }); */
   };
+
+  function test() {
+    setModeChoice(1);
+    console.log(ModeChoice);
+  }
   return (
     <div>
-      <Form.Control type="file" name="file" onChange={changeHandler} />
-      {isSelected ? (
-        <div>
-          <p>Filename: {selectedFile.name}</p>
-          <p>Filetype: {selectedFile.type}</p>
-          <p>Size in bytes: {selectedFile.size}</p>
-          <p>
-            lastModifiedDate:{" "}
-            {selectedFile.lastModifiedDate.toLocaleDateString()}
-          </p>
-        </div>
-      ) : (
-        <p>Select a file to show details</p>
-      )}
-      <Button variant="primary" type="submit" onClick={handleSubmission}>
-        Submit
+      <Form>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Aperçu</th>
+              <th></th>
+            </tr>
+          </thead>
+          
+              <tbody>
+                <tr>
+                  <td> </td>
+                  <td>
+                    {" "}
+                    <Form.Control type="file" name="file" />{" "}
+                  </td>
+                  <td>
+                    <Button >X</Button>
+                  </td>
+                </tr>
+              </tbody>
+        </Table>
+      </Form>
+      <Button variant="primary" type="submit" onClick={() => setModeChoice(2) }>
+        Active
       </Button>
     </div>
   );
