@@ -1,7 +1,7 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
-import { FaSave } from "react-icons/fa";
+
 function Normale({ ModeChoice,setModeChoice}) {
   const dragItem = useRef();
   const dragOverItem = useRef();
