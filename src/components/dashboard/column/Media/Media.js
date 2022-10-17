@@ -1,44 +1,69 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import React, { useState } from "react";
 import "../../../../styles/Main.css";
-
+import Picture from "./picture";
 import Nav from "react-bootstrap/Nav";
 import SplitScreen from "./modeMedia/SplitScreen";
 import TimeScreen from "./modeMedia/TimeScreen";
+import { useDrop } from "react-dnd";
 import FullScreen from "./modeMedia/FullScreen";
 import { useImmer } from "use-immer";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Button, Form } from "react-bootstrap";
+
+
+
 
 function Media() {
   const [ModeChoice, setModeChoice] = useState(0);
   const [NavMode, setNavMode] = useState(
     <SplitScreen ModeChoice={ModeChoice} setModeChoice={setModeChoice} />
   );
-  var [media, updateMedia] = useImmer([
+    var [PictureList, setPictureList] = useImmer([
     {
-      id: "Media 1",
-      name: "Media 1",
-      thumb: "/images/gary.png",
+      id: 1,
+      url: "https://yt3.ggpht.com/ytc/AAUvwnjOQiXUsXYMs8lwrd4litEEqXry1-atqJavJJ09=s900-c-k-c0x00ffffff-no-rj",
+      name: "media1",
     },
     {
-      id: "Media 2",
-      name: "Media 2",
-      thumb: "/images/cato.png",
+      id: 2,
+      url: "https://images.pexels.com/photos/4603884/pexels-photo-4603884.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      name: "media2",
     },
     {
-      id: "Media 3",
-      name: "Media 3",
-      thumb: "/images/kvn.png",
+      id: 3,
+      url: "https://images.pexels.com/photos/4603884/pexels-photo-4603884.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      name: "media3",
     },
-    {
-      id: "Media 4",
-      name: "Media 5",
-      thumb: "/images/mooncake.png",
-    },
-  ]);
+  ]); 
+  const [board, setBoard] = useState([]);
+  const [board2, setBoard2] = useState([]);
 
+  const [{ isOver2 }, drop2] = useDrop(() => ({
+    accept: "image",
+    drop2: (item) => addImageToBoard(item.id),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+  
+  const addImageToBoard = (id) => {
+    const pictureList = PictureList.filter((picture) => id === picture.id);
+    setBoard((board) => [...board, pictureList[0]]);
+  };
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "image",
+    drop: (item) => addImageToBoard2(item.id),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+  const addImageToBoard2 = (id) => {
+    const pictureList = PictureList.filter((picture) => id === picture.id);
+    setBoard2((board) => [...board, pictureList[0]]);
+  };
+   
+
+  
   function nav(mode) {
     console.log(mode);
     if (mode === 1) {
@@ -62,30 +87,21 @@ function Media() {
       console.log(NavMode);
     }
   }
-  function handleOnDragEnd(result) {
-    if (!result.destination) return;
-
-    const items = Array.from(media);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    updateMedia(items);
-  }
 
   return (
-    <div className="Media">
+    <div>
       <Nav fill variant="tabs">
         <Nav.Item>
           <Nav.Link eventKey="1" onClick={() => nav(1)}>
             {" "}
             {ModeChoice === 1 ? (
-              <strong className="ModeChoice">3 Images</strong>
+              <strong className="ModeChoice">écran diviser</strong>
             ) : (
               "3 Images"
             )}
           </Nav.Link>
         </Nav.Item>
-        <Nav.Item>
+        {/*  <Nav.Item>
           <Nav.Link eventKey="2" onClick={() => nav(2)}>
             {ModeChoice === 2 ? (
               <strong className="ModeChoice">1 Image</strong>
@@ -93,7 +109,7 @@ function Media() {
               "1 Image"
             )}
           </Nav.Link>
-        </Nav.Item>
+        </Nav.Item> */}
         <Nav.Item>
           <Nav.Link eventKey="3" onClick={() => nav(3)}>
             {ModeChoice === 3 ? (
@@ -104,50 +120,26 @@ function Media() {
           </Nav.Link>
         </Nav.Item>
       </Nav>
-      {NavMode}
-      <br />
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="characters">
-          {(provided) => (
-            <ul
-              className="characters"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {media.map(({ id, name, thumb }, index) => {
-                return (
-                  <Draggable key={id} draggableId={id} index={index}>
-                    {(provided) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        {/* <div className="characters-thumb">
-                          <img src={thumb} alt={`${name} Thumb`} />
-                        </div> */}
-                        <p>{name}</p>
-                        <Button variant="outline-dark">X</Button>
-                      </li>
-                    )}
-                  </Draggable>
-                );
-              })}
-              {provided.placeholder}
-            </ul>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <Form>
-        <Form.Group controlId="formFileSm" className="mb-3">
-          <Form.Label>Add file</Form.Label>
-          <Form.Control type="file" size="sm" />
-          <br />
-          <Form.Control size="sm" type="text" placeholder="File name" />
-          <br />
-          <Button variant="primary" type="submit" >Add</Button>
-        </Form.Group>
-      </Form>
+      {/* {NavMode} */}
+      <div className="Board" ref={drop}>
+          {board.map((picture) => {
+            return <Picture url={picture.url} id={picture.id} />;
+          })}
+        </div>
+        <div className="Board" ref={drop2}>
+          {board2.map((picture) => {
+            return <Picture url={picture.url} id={picture.id} />;
+          })}
+        </div>
+        
+      
+        <div className="Pictures">
+          {PictureList.map((picture) => {
+            return <Picture url={picture.url} id={picture.id} />;
+          })}
+        </div>
+        
+      
     </div>
   );
 }

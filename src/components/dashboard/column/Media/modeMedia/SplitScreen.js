@@ -1,8 +1,10 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
+import "../../../../../styles/Main.css";
+import { useDrag } from "react-dnd";
 
-function Normale({ ModeChoice,setModeChoice}) {
+function Normale({ ModeChoice,setModeChoice,board}) {
   const dragItem = useRef();
   const dragOverItem = useRef();
 
@@ -23,6 +25,18 @@ function Normale({ ModeChoice,setModeChoice}) {
       file: "salut",
     },
   ]);
+
+  function NewFile() {
+    if (SplitScreen.length <3){
+    setSplitScreen((draft) => {
+      draft.push({
+        id: "file_" + Math.random(),
+        fileName: "new file" + Math.random(),
+        file: "new file",
+        Time: 1,
+      });
+    });}
+  }
 
   //////////////////DRAG AND DROP//////////////////
   function dragStart(e, position) {
@@ -63,14 +77,20 @@ function Normale({ ModeChoice,setModeChoice}) {
 
     setSplitScreen((draft) => {
       const file1 = draft.findIndex((file1) => file1.id === id);
-
+      draft.splice(file1, 1);
       
     });
   }
   /////////////////////////////////////////////////
-
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "image",
+    item: { id: board.id },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
   return (
-    <div>
+    <div >
       <Form>
         <Table striped bordered hover>
           <thead>
@@ -80,31 +100,23 @@ function Normale({ ModeChoice,setModeChoice}) {
               <th></th>
             </tr>
           </thead>
-          {SplitScreen &&
-            SplitScreen.map((file, index) => (
-              <tbody>
-                <tr
-                  onDragStart={(e) => dragStart(e, index)}
-                  onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop}
-                  key={index}
-                  draggable
-                >
-                  <td key={file.id}>{file.fileName}</td>
-                  <td>
-                    {" "}
-                    <Form.Control type="file" name="file" />{" "}
-                  </td>
-                  <td>
-                    <Button onClick={(e) => DeleteFile(e, file)}>X</Button>
-                  </td>
-                </tr>
-              </tbody>
+          {board &&
+            board.map((file, index) => (
+               <img
+              ref={drag}
+              src={board.url}
+              width="100px"
+              height="100px"
+              style={{ border: isDragging ? "5px solid pink" : "0px" }}
+            />
             ))}
         </Table>
       </Form>
       <Button variant="primary" type="submit" onClick={() => setModeChoice(1) }>
         Active
+      </Button>
+      <Button variant="primary" type="submit" onClick={() => NewFile()}>
+        Ajouter Document
       </Button>
       {/* <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
         Ajouter Document

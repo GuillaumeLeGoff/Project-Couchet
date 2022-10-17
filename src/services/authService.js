@@ -15,13 +15,10 @@ class AuthService {
     logout() {
         localStorage.removeItem("user");
     }
-    register(username, password, role) {
-         let roles = [];
-         roles[0] = role;
+    register(username, password) {
         return axios.post("http://localhost:4000/auth/signup", {
             username,
-            password,
-            roles
+            password
         });
     }
 

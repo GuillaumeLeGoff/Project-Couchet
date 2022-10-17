@@ -72,7 +72,7 @@
   padding-left: 10px;
 }
 
-.ModeChoice{
+.ModeChoice {
   color: black;
 }
 .App {
@@ -109,8 +109,8 @@
   display: flex;
   align-items: center;
   border: solid 1px #d0d0d0;
-  border-radius: .2em;
-  padding: .5em .8em .5em .5em;
+  border-radius: 0.2em;
+  padding: 0.5em 0.8em 0.5em 0.5em;
   margin-bottom: 0.2em;
 }
 
@@ -126,12 +126,17 @@
   width: 2em;
   height: 2em;
   background-color: #e8e8e8;
-  padding: .5em;
-  margin-right: .5em;
+  padding: 0.5em;
+  margin-right: 0.5em;
 }
 
 .characters-thumb img {
   display: block;
   width: 100%;
   height: auto;
+}
+.Board {
+  width: 300px;
+  height: 500px;
+  border: 2px solid black;
 }

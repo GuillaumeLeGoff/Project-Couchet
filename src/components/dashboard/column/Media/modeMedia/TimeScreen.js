@@ -91,10 +91,10 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
                   draggable
                 >
                   <td key={file.id}>{file.fileName}</td>
-                  <td>
-                    {" "}
+                  
+                  {file.id=== 0 ?  <td ></td> :<td>
                     <Form.Control type="file" name="file" />{" "}
-                  </td>
+                  </td>}
                   <td>
                     <Form.Control
                       onChange={(e) => HandleToggleTime(e, file)}
@@ -103,9 +103,10 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
                       min="1"
                     />
                   </td>
-                  <td>
+                  {file.id=== 0 ?  <td ></td> :<td >
                     <Button onClick={(e) => DeleteFile(e, file)}>X</Button>
-                  </td>
+                  </td> }
+                  
                 </tr>
               </tbody>
             ))}
