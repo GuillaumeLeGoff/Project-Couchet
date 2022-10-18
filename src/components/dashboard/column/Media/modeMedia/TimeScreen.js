@@ -1,6 +1,7 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
+import { AiOutlineCheck ,AiOutlineFileAdd} from "react-icons/ai";
 function MultiScreen({ ModeChoice, setModeChoice }) {
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -71,12 +72,12 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
   return (
     <div>
       <Form>
-        <Table striped bordered hover>
+        <Table striped>
           <thead>
             <tr>
               <th>Nom</th>
               <th>Aperçu</th>
-              <th>Durée</th>
+              <th>Duration (sc)</th>
               <th></th>
             </tr>
           </thead>
@@ -112,11 +113,11 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
             ))}
         </Table>
       </Form>
-      <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
-        Ajouter Document
+      <Button className="buttonActive margin50" variant="success" type="submit" onClick={(e) => NewFile()}>
+      <AiOutlineFileAdd/>
       </Button>
-      <Button variant="primary" type="submit" onClick={() => setModeChoice(3)}>
-        Active
+      <Button className="buttonActive" variant="success" type="submit" onClick={() => setModeChoice(1)}>
+        <AiOutlineCheck/>
       </Button>
     </div>
   );

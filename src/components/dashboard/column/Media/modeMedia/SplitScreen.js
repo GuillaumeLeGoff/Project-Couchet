@@ -1,10 +1,9 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { useRef } from "react";
-import "../../../../../styles/Main.css";
-import { useDrag } from "react-dnd";
-
-function Normale({ ModeChoice,setModeChoice,board}) {
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { AiOutlineCheck } from "react-icons/ai";
+function Normale({ ModeChoice, setModeChoice }) {
   const dragItem = useRef();
   const dragOverItem = useRef();
 
@@ -25,18 +24,6 @@ function Normale({ ModeChoice,setModeChoice,board}) {
       file: "salut",
     },
   ]);
-
-  function NewFile() {
-    if (SplitScreen.length <3){
-    setSplitScreen((draft) => {
-      draft.push({
-        id: "file_" + Math.random(),
-        fileName: "new file" + Math.random(),
-        file: "new file",
-        Time: 1,
-      });
-    });}
-  }
 
   //////////////////DRAG AND DROP//////////////////
   function dragStart(e, position) {
@@ -77,22 +64,14 @@ function Normale({ ModeChoice,setModeChoice,board}) {
 
     setSplitScreen((draft) => {
       const file1 = draft.findIndex((file1) => file1.id === id);
-      draft.splice(file1, 1);
-      
     });
   }
   /////////////////////////////////////////////////
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "image",
-    item: { id: board.id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+
   return (
-    <div >
+    <div>
       <Form>
-        <Table striped bordered hover>
+        <Table striped>
           <thead>
             <tr>
               <th>Nom</th>
@@ -100,23 +79,37 @@ function Normale({ ModeChoice,setModeChoice,board}) {
               <th></th>
             </tr>
           </thead>
-          {board &&
-            board.map((file, index) => (
-               <img
-              ref={drag}
-              src={board.url}
-              width="100px"
-              height="100px"
-              style={{ border: isDragging ? "5px solid pink" : "0px" }}
-            />
+          {SplitScreen &&
+            SplitScreen.map((file, index) => (
+              <tbody>
+                <tr
+                  onDragStart={(e) => dragStart(e, index)}
+                  onDragEnter={(e) => dragEnter(e, index)}
+                  onDragEnd={drop}
+                  key={index}
+                  draggable
+                >
+                  <td key={file.id}>{file.fileName}</td>
+                  <td>
+                    {" "}
+                    <Form.Control type="file" name="file" />{" "}
+                  </td>
+                  <td>
+                    <Button
+                      className="ButtonUp"
+                      variant="secondary"
+                      onClick={(e) => DeleteFile(e, file)}
+                    >
+                      <MdOutlineDeleteOutline />
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
             ))}
         </Table>
       </Form>
-      <Button variant="primary" type="submit" onClick={() => setModeChoice(1) }>
-        Active
-      </Button>
-      <Button variant="primary" type="submit" onClick={() => NewFile()}>
-        Ajouter Document
+      <Button className="buttonActive" variant="success" type="submit" onClick={() => setModeChoice(1)}>
+        <AiOutlineCheck/>
       </Button>
       {/* <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
         Ajouter Document

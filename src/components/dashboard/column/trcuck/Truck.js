@@ -22,8 +22,90 @@ function Truck() {
     getTruck();
   }, []);
 
-  var [LoadingTruck, setLoadingTruck] = useImmer([]);
-  var [NextTruck, setNextTruck] = useImmer([]);
+  var [LoadingTruck, setLoadingTruck] = useImmer([{
+    "id": 0,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 1,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 2,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 3,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 4,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 5,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+}]);
+  var [NextTruck, setNextTruck] = useImmer([{
+    "id": 0,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 1,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 2,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 3,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 4,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+},
+{
+    "id": 5,
+    "dockIndex": "",
+    "plate": "",
+    "state": "",
+    "flag":true
+}]);
   const delay = ms => new Promise(
     resolve => setTimeout(resolve, ms)
   );
@@ -120,12 +202,14 @@ function Truck() {
 
   return (
     <div className="Truck">
+      <h5 className="titleColumn">Truck</h5>
+      <h7 className="titleColumn">Loading</h7>
       <Form>
-        <Table striped bordered hover>
+        <Table striped  variant="dark">
           <thead>
             <tr>
               <th>Docks</th>
-              <th>Truck</th>
+              <th>Plate</th>
               <th>State</th>
             </tr>
           </thead>
@@ -150,15 +234,17 @@ function Truck() {
                   />
                 </td>
                 <td>{docks.state ? <Loading /> : <Come />}</td>
+                
               </tr>
             </tbody>
           ))}
         </Table>
-        <Table striped bordered hover>
+        <h7 className="titleColumn">Next</h7>
+        <Table striped  variant="dark">
           <thead>
             <tr>
               <th>Docks</th>
-              <th>Truck</th>
+              <th>Plate</th>
               <th>State</th>
               <th></th>
             </tr>
@@ -187,7 +273,7 @@ function Truck() {
                   <Button
                     className="ButtonUp"
                     onClick={(e) => MoveLoadingToNext(e, docks)}
-                    variant="primary"
+                    variant="secondary"
                   >
                     <FaArrowUp />
                   </Button>
@@ -197,7 +283,7 @@ function Truck() {
           ))}
         </Table>
       </Form>
-      <Button onClick={postTrucks}>
+      <Button className="buttonActive" variant="success" onClick={postTrucks}>
         <FaSave />
       </Button>
     </div>

@@ -1,6 +1,5 @@
 .App {
   text-align: center;
-  background-color: #d5d9df;
 }
 
 .App-logo {
@@ -44,4 +43,20 @@
   margin-right: 25px;
   margin-left: 25px;
   background-color: rgb(255, 255, 255);
+}
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+.titleColumn{
+  color: #52291B
+}
+
+.Inputtruck:focus {
+  border-color: #4b4a4a;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(66, 66, 66, 0.6);
+  background-color:#7c838a;
 }

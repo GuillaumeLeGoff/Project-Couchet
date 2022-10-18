@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
-
-function FullScreen({ ModeChoice,setModeChoice}) {
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { AiOutlineCheck } from "react-icons/ai";
+function FullScreen({ ModeChoice, setModeChoice }) {
+  
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
-  
 
   return (
     <div>
       <Form>
-        <Table striped bordered hover>
+        <Table striped>
           <thead>
             <tr>
               <th>Nom</th>
@@ -17,23 +18,28 @@ function FullScreen({ ModeChoice,setModeChoice}) {
               <th></th>
             </tr>
           </thead>
-          
-              <tbody>
-                <tr>
-                  <td> </td>
-                  <td>
-                    {" "}
-                    <Form.Control type="file" name="file" />{" "}
-                  </td>
-                  <td>
-                    <Button >X</Button>
-                  </td>
-                </tr>
-              </tbody>
+
+          <tbody>
+            <tr>
+              <td> </td>
+              <td>
+                {" "}
+                <Form.Control type="file" name="file" />{" "}
+              </td>
+              <td>
+              <Button
+                    className="ButtonUp"
+                    variant="secondary"
+                  >
+                    <MdOutlineDeleteOutline />
+                  </Button>
+              </td>
+            </tr>
+          </tbody>
         </Table>
       </Form>
-      <Button variant="primary" type="submit" onClick={() => setModeChoice(2) }>
-        Active
+      <Button className="buttonActive" variant="success" type="submit" onClick={() => setModeChoice(1)}>
+        <AiOutlineCheck/>
       </Button>
     </div>
   );

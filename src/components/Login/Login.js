@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Button, Col, InputGroup, Row } from "react-bootstrap";
+
 import AuthService from "../../services/authService";
-import Form from "react-validation/build/form";
+
 import CheckButton from "react-validation/build/button";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../../styles/Main.css";
+import { Button, Form } from "react-bootstrap";
 const required = (value) => {
   if (!value) {
     return (
@@ -38,7 +41,6 @@ export default class Login extends Component {
     });
   }
 
-
   handleRegister(e) {
     e.preventDefault();
     this.setState({
@@ -47,10 +49,7 @@ export default class Login extends Component {
     });
     this.form.validateAll();
     if (this.checkBtn.context._errors.length === 0) {
-      AuthService.register(
-        this.state.username,
-        this.state.password,
-      ).then(
+      AuthService.register(this.state.username, this.state.password).then(
         (response) => {
           this.setState({
             message: response.data.message,
@@ -76,7 +75,8 @@ export default class Login extends Component {
   render() {
     return (
       <div>
-        <Form
+        <div className="login">
+        {/*  <Form
           onSubmit={this.handleRegister}
           ref={(c) => {
             this.form = c;
@@ -107,13 +107,51 @@ export default class Login extends Component {
             />
           </div>
           <CheckButton
-                            
-                            ref={c => {
-                                this.checkBtn = c;
-                            }}
-                        />
+            ref={(c) => {
+              this.checkBtn = c;
+            }}
+          />
+        </Form> */}
+        <Form
+          onSubmit={this.handleRegister}
+          ref={(c) => {
+            this.form = c;
+          }}
+          className="LoginMargin"
+        >
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              value={this.state.username}
+              onChange={this.onChangeUsername}
+              validations={[required]}
+              type="email"
+              placeholder="Enter email"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              name="password"
+              value={this.state.password}
+              onChange={this.onChangePassword}
+              validations={[required]}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Group>
+          <Button
+            ref={(c) => {
+              this.checkBtn = c;
+            }}
+            variant="success"
+            type="submit"
+          >
+            Submit
+          </Button>
         </Form>
-        
+        </div>
       </div>
     );
   }

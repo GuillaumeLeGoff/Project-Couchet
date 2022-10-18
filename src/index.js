@@ -1,20 +1,21 @@
-import 'mdb-react-ui-kit/dist/css/mdb.min.css'
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import "mdb-react-ui-kit/dist/css/mdb.min.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
-import App from './components/App';
-import reportWebVitals from './reportWebVitals';
-<link href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet" />;
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import App from "./components/App";
+import reportWebVitals from "./reportWebVitals";
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+  rel="stylesheet"
+/>;
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    
-
-    <DndProvider backend={HTML5Backend}>
+  <BrowserRouter>
     <App />
-    </DndProvider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
