@@ -6,25 +6,29 @@ import { useState } from "react";
 import Dashboard from "./dashboard/Dashboard";
 import Hearder from "./Header";
 import Footer from "./Footer";
+import AuthService from "../services/authService";
 
 import { Route, Routes } from "react-router-dom";
 
 function App() {
-  const [token, setToken] = useState();
+  const [token, setToken] = useState(AuthService.getCurrentUser());
 
-  if (token) {
-    return (<div className="App"><Hearder/> <Login setToken={setToken}/></div>) ;
-  }
-  return (
-    <div className="App">
-      <Hearder/>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-      <Footer/>
+  if (token == null) {
+    return (
+      <div className="App">
+        <Hearder token={token}/>
+        <Login />
+        <Footer />
       </div>
-  );
+    );
+  } else
+    return (
+      <div className="App">
+        <Hearder token={token}/>
+        <Dashboard />
+        <Footer />
+      </div>
+    );
 }
 
 export default App;

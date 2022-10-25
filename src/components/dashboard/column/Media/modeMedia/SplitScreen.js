@@ -91,8 +91,8 @@ function Normale({ ModeChoice, setModeChoice }) {
                 >
                   <td key={file.id}>{file.fileName}</td>
                   <td>
-                    {" "}
-                    <Form.Control type="file" name="file" />{" "}
+                    
+                    <Form.Control type="file" name="file" />
                   </td>
                   <td>
                     <Button

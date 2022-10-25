@@ -11,12 +11,14 @@ import "../../styles/Main.css";
 function Dashboard() {
   return (
     <div>
-      <Row >
-        <Col className="Column" sm={3}>
+      <Row className="row2">
+        <Col sm={3} className="Column" >
           <Truck />
         </Col>
-        <Col className="Column" sm={4}><Screen/></Col>
-        <Col className="Column">
+        <Col sm className="Column">
+          <Screen />
+        </Col>
+        <Col sm className="Column">
           <Media />
         </Col>
       </Row>

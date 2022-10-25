@@ -19,6 +19,7 @@ const required = (value) => {
 export default class Login extends Component {
   constructor(props) {
     super(props);
+    this.handleLogin = this.handleLogin.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
@@ -47,36 +48,61 @@ export default class Login extends Component {
       message: "",
       successful: false,
     });
-    this.form.validateAll();
-    if (this.checkBtn.context._errors.length === 0) {
-      AuthService.register(this.state.username, this.state.password).then(
-        (response) => {
-          this.setState({
-            message: response.data.message,
-            successful: true,
-          });
-        },
-        (error) => {
-          const resMessage =
-            (error.response &&
-              error.message.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          this.setState({
-            successful: false,
-            message: resMessage,
-          });
-        }
-      );
-    }
+    /* this.form.validateAll(); */
+
+    AuthService.register(this.state.username, this.state.password).then(
+      (response) => {
+        this.setState({
+          message: response.data.message,
+          successful: true,
+        });
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.message.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        this.setState({
+          successful: false,
+          message: resMessage,
+        });
+      }
+    );
+  }
+  handleLogin(e) {
+    e.preventDefault();
+    this.setState({
+      message: "",
+      loading: true,
+    });
+
+    AuthService.login(this.state.username, this.state.password).then(
+      () => {
+        console.log("OK");
+        window.location.reload();
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.message.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        this.setState({
+          loading: false,
+          message: resMessage,
+        });
+      }
+    );
   }
 
   render() {
     return (
       <div>
         <div className="login">
-        {/*  <Form
+          {/* <Form
           onSubmit={this.handleRegister}
           ref={(c) => {
             this.form = c;
@@ -112,45 +138,45 @@ export default class Login extends Component {
             }}
           />
         </Form> */}
-        <Form
-          onSubmit={this.handleRegister}
-          ref={(c) => {
-            this.form = c;
-          }}
-          className="LoginMargin"
-        >
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              value={this.state.username}
-              onChange={this.onChangeUsername}
-              validations={[required]}
-              type="email"
-              placeholder="Enter email"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              name="password"
-              value={this.state.password}
-              onChange={this.onChangePassword}
-              validations={[required]}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Group>
-          <Button
+          <Form
+            onSubmit={this.handleLogin}
             ref={(c) => {
-              this.checkBtn = c;
+              this.form = c;
             }}
-            variant="success"
-            type="submit"
+            className="LoginMargin"
           >
-            Submit
-          </Button>
-        </Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                value={this.state.username}
+                onChange={this.onChangeUsername}
+                validations={[required]}
+                type="email"
+                placeholder="Enter email"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                name="password"
+                value={this.state.password}
+                onChange={this.onChangePassword}
+                validations={[required]}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Group>
+            <Button
+              ref={(c) => {
+                this.checkBtn = c;
+              }}
+              variant="success"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
         </div>
       </div>
     );

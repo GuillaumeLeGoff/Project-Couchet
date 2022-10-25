@@ -1,12 +1,12 @@
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    background-color: #D3BA91;
+  font-family: "Roboto", sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  background-color: #d3ba91;
 }
 .Loading {
-  color: rgb(26, 56, 138);
+  color: rgb(19, 74, 228);
 }
 
 .Wait {
@@ -14,7 +14,7 @@ body {
 }
 
 .Come {
-  color: green;
+  color: #19b919;
   animation: clignote 2s linear infinite;
 }
 
@@ -68,6 +68,8 @@ body {
   box-shadow: 1px 1px 5px #c1c2c3;
   background: #f4eeeb;
   border-radius: 15px;
+  padding-right: 1%;
+  padding-left: 1%;
 }
 
 .ButtonUp {
@@ -156,6 +158,7 @@ body {
   background-color: #3a0707;
 }
 
+
 .buttonHeader {
   color: #3a0707;
 }
@@ -196,9 +199,8 @@ body {
   margin-right: 50px;
 }
 
-.login{
+.login {
   background-color: #e8e2df;
-  height: 100%;
   width: 35%;
   margin-left: auto;
   margin-right: auto;

@@ -65,7 +65,6 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
       const files = draft.find((files) => files.id === id);
       files.Time = e.target.value;
     });
-    console.log(file);
   }
   /////////////////////////////////////////////////
 
@@ -77,7 +76,7 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
             <tr>
               <th>Nom</th>
               <th>Aperçu</th>
-              <th>Duration (sc)</th>
+              <th>Durée (sc)</th>
               <th></th>
             </tr>
           </thead>

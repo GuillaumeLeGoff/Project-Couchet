@@ -17,98 +17,15 @@ import Wait from "./State/Wait";
 
 function Truck() {
   const URL_API = "http://localhost:4000";
-  
+
   useEffect(() => {
-    getTruck();
+    waitLoading();
   }, []);
 
-  var [LoadingTruck, setLoadingTruck] = useImmer([{
-    "id": 0,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 1,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 2,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 3,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 4,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 5,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-}]);
-  var [NextTruck, setNextTruck] = useImmer([{
-    "id": 0,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 1,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 2,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 3,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 4,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-},
-{
-    "id": 5,
-    "dockIndex": "",
-    "plate": "",
-    "state": "",
-    "flag":true
-}]);
-  const delay = ms => new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
+  var [LoadingTruck, setLoadingTruck] = useImmer([]);
+  var [NextTruck, setNextTruck] = useImmer([]);
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   function HandleToggleNext(e, docks) {
     const id = docks.id;
     setNextTruck((draft) => {
@@ -123,7 +40,6 @@ function Truck() {
 
       dock.dockIndex = e.target.value;
     });
-    console.log(NextTruck);
   }
   function HandleToggleLoading(e, docks) {
     const id = docks.id;
@@ -140,7 +56,8 @@ function Truck() {
     });
   }
 
-  async function MoveLoadingToNext(e, docks) {
+  //Move next vers loading
+  async function MoveNextToLoading(e, docks) {
     var id = docks.id;
     var id2 = docks.id;
     id2 = id2 - 6;
@@ -148,25 +65,36 @@ function Truck() {
       const dock = draft.find((dock) => dock.id === id);
       dock.plate = "";
       dock.dockIndex = 0;
-      postTruck(dock)
+      postTruck(dock);
     });
 
-    setLoadingTruck( (draft) => {
+    setLoadingTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id2);
       dock.plate = NextTruck[id2].plate;
       dock.dockIndex = NextTruck[id2].dockIndex;
-      dock.state= false
-      postTruck(dock)
+      dock.state = false;
+      postTruck(dock);
     });
     await delay(120000);
-    setLoadingTruck( (draft) => {
+    setLoadingTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id2);
-      dock.state= true
-      postTruck(dock)
+      dock.state = true;
+      postTruck(dock);
     });
-    
   }
-
+  //Au lancement mettre state en loading(true) au bout de 2 minutes
+  async function waitLoading() {
+    await getTruck();
+    await delay(120000);
+    for (let i = 0; i < 5; i++) {
+      setLoadingTruck((draft) => {
+        const dock = draft.find((dock) => dock.id === i);
+        dock.state = true;
+        postTruck(dock);
+      });
+    }
+  }
+  //GET
   async function getTruck() {
     const data = {};
     await axios
@@ -174,38 +102,39 @@ function Truck() {
       .then((result) => {
         setLoadingTruck(result.data.slice(0, 6));
         setNextTruck(result.data.slice(6, 12));
-        console.log(result.data.slice(6, 12));
-        console.log(result.data.slice(0, 6));
+       
       });
   }
+
   async function postTrucks() {
     LoadingTruck.forEach((truck) => {
-      postTruck(truck)
+      postTruck(truck);
     });
     NextTruck.forEach((truck) => {
-      postTruck(truck)
+      postTruck(truck);
     });
   }
-  async function postTruck(truck){
+  //POST
+  async function postTruck(truck) {
     axios
-        .put(URL_API + "/truck/" + truck._id, {
-          id: truck.id,
-          dockIndex: truck.dockIndex,
-          plate: truck.plate,
-          state: truck.state,
-        })
-        .then((res) => {
-          console.log(res);
-          console.log(res.data);
-        });
+      .put(URL_API + "/truck/" + truck._id, {
+        id: truck.id,
+        dockIndex: truck.dockIndex,
+        plate: truck.plate,
+        state: truck.state,
+      })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      });
   }
 
   return (
     <div className="Truck">
       <h5 className="titleColumn">Truck</h5>
-      <h7 className="titleColumn">Loading</h7>
+      <h6 className="titleColumn">Loading</h6>
       <Form>
-        <Table striped  variant="dark">
+        <Table striped variant="dark">
           <thead>
             <tr>
               <th>Docks</th>
@@ -217,7 +146,7 @@ function Truck() {
           {LoadingTruck.map((docks) => (
             <tbody>
               <tr>
-                <td>
+                <td className="inputDock">
                   {" "}
                   <Form.Control
                     className="Inputtruck"
@@ -226,7 +155,7 @@ function Truck() {
                     value={docks.dockIndex}
                   />{" "}
                 </td>
-                <td>
+                <td className="inputPlate">
                   <Form.Control
                     className="Inputtruck"
                     onChange={(e) => HandleToggleLoading(e, docks)}
@@ -234,13 +163,12 @@ function Truck() {
                   />
                 </td>
                 <td>{docks.state ? <Loading /> : <Come />}</td>
-                
               </tr>
             </tbody>
           ))}
         </Table>
-        <h7 className="titleColumn">Next</h7>
-        <Table striped  variant="dark">
+        <h6 className="titleColumn">Next</h6>
+        <Table striped variant="dark">
           <thead>
             <tr>
               <th>Docks</th>
@@ -252,7 +180,7 @@ function Truck() {
           {NextTruck.map((docks) => (
             <tbody>
               <tr>
-                <td>
+                <td className="inputDock">
                   {" "}
                   <Form.Control
                     className="Inputtruck"
@@ -261,7 +189,7 @@ function Truck() {
                     value={docks.dockIndex}
                   />{" "}
                 </td>
-                <td>
+                <td className="inputPlate">
                   <Form.Control
                     className="Inputtruck"
                     onChange={(e) => HandleToggleNext(e, docks)}
@@ -272,7 +200,7 @@ function Truck() {
                 <td>
                   <Button
                     className="ButtonUp"
-                    onClick={(e) => MoveLoadingToNext(e, docks)}
+                    onClick={(e) => MoveNextToLoading(e, docks)}
                     variant="secondary"
                   >
                     <FaArrowUp />
