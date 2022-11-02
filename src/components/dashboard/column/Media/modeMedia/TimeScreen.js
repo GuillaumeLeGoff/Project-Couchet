@@ -1,30 +1,45 @@
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
-import { useRef } from "react";
-import { AiOutlineCheck ,AiOutlineFileAdd} from "react-icons/ai";
+/* import { useRef } from "react"; */
+import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
+import { useEffect } from "react";
+import axios from "axios";
+import authService from "../../../../../services/authService";
 function MultiScreen({ ModeChoice, setModeChoice }) {
-  const dragItem = useRef();
-  const dragOverItem = useRef();
-  ///////////////////////DATA//////////////////////
-  var [MultiScreen, setMultiScreen] = useImmer([
-    {
-      id: 0,
-      fileName: "écran camion",
-      file: "salut",
-      Time: 4,
-    },
-  ]);
-  /////////////////////////////////////////////////
+  var [State, setState] = useImmer([]);
+  var [Id, setId] = useImmer([]);
+  /* const dragItem = useRef();
+  const dragOverItem = useRef(); */
+  const URL_API = "http://localhost:4000";
+  useEffect(() => {
+    getFile();
+  }, []);
+
+  async function getFile() {
+    const data = {};
+    await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
+      console.log(result.data.slice(4));
+      setState(result.data.slice(4));
+      setId(result.data[0]._id);
+      /* State.forEach((file,index) => {
+        setState((draft) => {
+          const dock = draft.find((dock) => dock._id === Id[index+5]._id);
+          dock.id= index+5;
+        });  
+      }); */
+    });
+    console.log(State);
+  }
 
   //////////////////DRAG AND DROP//////////////////
-  function dragStart(e, position) {
+  /* function dragStart(e, position) {
     dragItem.current = position;
-    /* console.log(e.target.innerHTML); */
+    console.log(e.target.innerHTML);
   }
 
   function dragEnter(e, position) {
     dragOverItem.current = position;
-    /* console.log(e.target.innerHTML); */
+    console.log(e.target.innerHTML);
   }
 
   function drop(e) {
@@ -35,37 +50,87 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
     dragItem.current = null;
     dragOverItem.current = null;
     setMultiScreen(copyListItems);
-  }
+  } */
   ////////////////////////////////////////////////
 
   //////////////////OPTION FILE///////////////////
-  function NewFile() {
-    setMultiScreen((draft) => {
-      draft.push({
-        id: "file_" + Math.random(),
-        fileName: "new file" + Math.random(),
-        file: "new file",
-        Time: 1,
+  async function NewFile() {
+    await axios
+      .post(URL_API + "/files", {
+        fileName: "file",
+      })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
       });
+    getFile();
+  }
+  async function handleSubmit(index, file) {
+    console.log(file);
+    setState((draft) => {
+      const dock = draft.find((dock) => dock._id === file._id);
+      dock.select = false;
     });
+    let exception = false;
+    try {
+      await axios
+        .post("http://localhost:4000/upload", file, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (ex) {
+      console.log(ex);
+      exception = true;
+    } finally {
+      if (!exception) {
+        try {
+          await axios.put("http://localhost:4000/file/" + file._id, {
+            fileName: file.fileName,
+            format: file.format,
+            path: file.path,
+            duration: file.duration,
+          });
+        } catch (ex) {
+          console.log(ex);
+        }
+      }
+    }
   }
 
-  function DeleteFile(e, file) {
-    const id = file.id;
-
-    setMultiScreen((draft) => {
-      const file1 = draft.findIndex((file1) => file1.id === id);
-      draft.splice(file1, 1);
+  function onFileChange(value, file) {
+    const fileName = value.target.files[0].name;
+    const format = value.target.files[0].type.split("/").pop();
+    if (value.target.files[0] != null) {
+      setState((draft) => {
+        const dock = draft.find((dock) => dock._id === file._id);
+        dock.file = value.target.files[0];
+        dock.fileName = fileName;
+        dock.format = format;
+        dock.user = authService.getCurrentUser().username;
+        dock.path = "../../../../../../../public/media/" + fileName;
+        dock.select = true;
+      });
+    }
+  }
+  function onTimeChange(value, file) {
+       setState((draft) => {
+        const dock = draft.find((dock) => dock._id === file._id);
+        dock.duration = value.target.valueAsNumber;
+      });
+    
+  }
+  async function DeleteFile(file) {
+    await axios.delete(URL_API + "/file/" + file._id).then((res) => {
+      console.log(res);
+      console.log(res.data);
     });
+    getFile();
   }
 
-  function HandleToggleTime(e, file) {
-    const id = file.id;
-    setMultiScreen((draft) => {
-      const files = draft.find((files) => files.id === id);
-      files.Time = e.target.value;
-    });
-  }
   /////////////////////////////////////////////////
 
   return (
@@ -80,43 +145,82 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
               <th></th>
             </tr>
           </thead>
-          {MultiScreen &&
-            MultiScreen.map((file, index) => (
+          {State &&
+            State.map((file, index) => (
               <tbody>
                 <tr
-                  onDragStart={(e) => dragStart(e, index)}
+                  /*   onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop}
+                  onDragEnd={drop} */
                   key={index}
                   draggable
                 >
-                  <td key={file.id}>{file.fileName}</td>
-                  
-                  {file.id=== 0 ?  <td ></td> :<td>
-                    <Form.Control type="file" name="file" />{" "}
-                  </td>}
-                  <td>
-                    <Form.Control
-                      onChange={(e) => HandleToggleTime(e, file)}
-                      type="number"
-                      value={file.Time}
-                      min="1"
-                    />
-                  </td>
-                  {file.id=== 0 ?  <td ></td> :<td >
-                    <Button onClick={(e) => DeleteFile(e, file)}>X</Button>
-                  </td> }
-                  
+                  <td key={index}>{file.fileName}</td>
+
+                  {file.id === 4 ? (
+                    <td></td>
+                  ) : (
+                    <td>
+                      <Form.Control
+                        onChange={(e) => onFileChange(e, file)}
+                        type="file"
+                        name="file"
+                      />
+                    </td>
+                  )}
+                  {file.id === 4 ? (
+                    <td></td>
+                  ) : (
+                    <td>
+                      <Form.Control
+                        onChange={(e) => onTimeChange(e, file)}
+                        type="number"
+                        value={file.duration}
+                        min="1"
+                      />
+                    </td>
+                  )}
+                  {file.id === 4 ? (
+                    <td></td>
+                  ) : (
+                    <td>
+                      {file.id === 0 ? (
+                        ""
+                      ) : (
+                        <Button onClick={() => DeleteFile(file)}>X</Button>
+                      )}
+                      {file.select ? (
+                        <Button
+                          onClick={() => handleSubmit(index, file)}
+                          className="btn-large waves-effect blue-grey darken-4 waves-orange"
+                        >
+                          Ajouter ce média
+                        </Button>
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                  )}
                 </tr>
               </tbody>
             ))}
         </Table>
       </Form>
-      <Button className="buttonActive margin50" variant="success" type="submit" onClick={(e) => NewFile()}>
-      <AiOutlineFileAdd/>
+      <Button
+        className="buttonActive margin50"
+        variant="success"
+        type="submit"
+        onClick={() => NewFile()}
+      >
+        <AiOutlineFileAdd />
       </Button>
-      <Button className="buttonActive" variant="success" type="submit" onClick={() => setModeChoice(1)}>
-        <AiOutlineCheck/>
+      <Button
+        className="buttonActive"
+        variant="success"
+        type="submit"
+        onClick={() => setModeChoice(1)}
+      >
+        <AiOutlineCheck />
       </Button>
     </div>
   );

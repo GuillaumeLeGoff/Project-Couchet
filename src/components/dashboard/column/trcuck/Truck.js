@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { FaArrowUp, FaSave } from "react-icons/fa";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useImmer } from "use-immer";
 import "../../../../styles/Main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -55,12 +56,35 @@ function Truck() {
       dock.dockIndex = e.target.value;
     });
   }
+  async function DeleteNextTruck(docks){
+    
+    setLoadingTruck((draft) => {
+        const dock = draft.find((dock) => dock._id === docks._id);
+        dock.dockIndex = 0;
+        dock.plate = "";
+        dock.state = true;
+        postTruck(dock)
+      });
+    
+  }
 
   //Move next vers loading
   async function MoveNextToLoading(e, docks) {
     var id = docks.id;
     var id2 = docks.id;
     id2 = id2 - 6;
+
+    LoadingTruck.forEach((dock, index) => {
+      if (docks.dockIndex == dock.dockIndex) {
+        setLoadingTruck((draft) => {
+          const dock = draft.find((dock) => dock.id === index);
+          dock.dockIndex = 0;
+          dock.plate = "";
+          dock.state = true;
+          postTruck(dock);
+        });
+      }
+    });
     setNextTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id);
       dock.plate = "";
@@ -94,7 +118,7 @@ function Truck() {
       });
     }
   }
-  //GET
+  //GET all
   async function getTruck() {
     const data = {};
     await axios
@@ -102,10 +126,9 @@ function Truck() {
       .then((result) => {
         setLoadingTruck(result.data.slice(0, 6));
         setNextTruck(result.data.slice(6, 12));
-       
       });
   }
-
+  //POST all
   async function postTrucks() {
     LoadingTruck.forEach((truck) => {
       postTruck(truck);
@@ -114,7 +137,7 @@ function Truck() {
       postTruck(truck);
     });
   }
-  //POST
+  //POST one
   async function postTruck(truck) {
     axios
       .put(URL_API + "/truck/" + truck._id, {
@@ -138,7 +161,7 @@ function Truck() {
           <thead>
             <tr>
               <th>Docks</th>
-              <th>Plate</th>
+              <th>Référence</th>
               <th>State</th>
             </tr>
           </thead>
@@ -163,6 +186,15 @@ function Truck() {
                   />
                 </td>
                 <td>{docks.state ? <Loading /> : <Come />}</td>
+                <td>
+                  <Button
+                    className="ButtonUp"
+                    onClick={() => DeleteNextTruck(docks)}
+                    variant="secondary"
+                  >
+                    <MdOutlineDeleteOutline />
+                  </Button>
+                </td>
               </tr>
             </tbody>
           ))}
@@ -172,7 +204,7 @@ function Truck() {
           <thead>
             <tr>
               <th>Docks</th>
-              <th>Plate</th>
+              <th>Référence</th>
               <th>State</th>
               <th></th>
             </tr>
