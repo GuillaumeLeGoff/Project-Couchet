@@ -12,7 +12,9 @@ body {
 .Wait {
   color: rgb(221, 201, 18);
 }
-
+/* .veille {
+  display: flex
+} */
 .Come {
   color: #19b919;
   animation: clignote 2s linear infinite;

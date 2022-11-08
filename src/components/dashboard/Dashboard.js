@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import React from "react";
 import Truck from "./column/trcuck/Truck";
 import Media from "./column/Media/Media";
-import Screen from "./column/Screen";
+import Screen from "./column/Screen/Screen";
 import "../../styles/App.css";
 import "../../styles/Main.css";
 

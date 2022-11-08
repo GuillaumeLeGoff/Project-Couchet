@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
 import AuthService from "../../services/authService";
-
-import CheckButton from "react-validation/build/button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/Main.css";
 import { Button, Form } from "react-bootstrap";
@@ -151,7 +149,7 @@ export default class Login extends Component {
                 value={this.state.username}
                 onChange={this.onChangeUsername}
                 validations={[required]}
-                type="email"
+                type="texte"
                 placeholder="Enter email"
               />
             </Form.Group>

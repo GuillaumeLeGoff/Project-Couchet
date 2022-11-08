@@ -8,10 +8,10 @@ import Hearder from "./Header";
 import Footer from "./Footer";
 import AuthService from "../services/authService";
 
-import { Route, Routes } from "react-router-dom";
+
 
 function App() {
-  const [token, setToken] = useState(AuthService.getCurrentUser());
+  const [token, ] = useState(AuthService.getCurrentUser());
 
   if (token == null) {
     return (

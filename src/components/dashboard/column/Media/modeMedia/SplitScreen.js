@@ -1,67 +1,76 @@
+import { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
-import { useEffect } from "react";
-
-import { MdOutlineDeleteOutline } from "react-icons/md";
+import { MdFileDownload } from "react-icons/md";
+import axios from "axios";
 import { AiOutlineCheck } from "react-icons/ai";
 import authService from "../../../../../services/authService";
-import axios from "axios";
-function Normale({ ModeChoice, setModeChoice }) {
+import "../../../../../styles/App.css";
+function Normale({ ModeChoice, changeMode }) {
   const URL_API = "http://localhost:4000";
   var [State, setState] = useImmer([]);
-  var [Id, setId] = useImmer([]);
-  const fichier1 = false
-  const fichier2 = false
-  const fichier3 = false
+
 
   useEffect(() => {
     getFile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getFile() {
     const data = {};
     await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
       setState(result.data.slice(1, 4));
-      setId(result.data);
+      
     });
   }
 
-  function DeleteFile(e, file) {
-    const id = file.id;
+ /*  function DeleteFile(e, file) {
+     const id = file.id;
 
     setState((draft) => {
       const file1 = draft.findIndex((file1) => file1.id === id);
     });
-  }
-  function onFileUpload(value, index) {
+  } */
+  function onFileUpload(value, file) {
+    console.log(value);
     if (value.target.files[0] != null) {
-     
-      const fileName = value.target.files[0].name;
+      var text = "";
+      var possible =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (var i = 0; i < 20; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      const fileName = "splitScreen_"+ text;
       const format = value.target.files[0].type.split("/").pop();
-
+      axios
+          .post(URL_API + "/delete", {
+            fileName: file.fileName,
+            format: file.format,
+          })
+          .then((res) => {
+            console.log(res);
+            console.log(res.data);
+          });
       setState((draft) => {
-        const dock = draft.find((dock) => dock.id === index + 1);
+        const dock = draft.find((dock) => dock._id === file._id);
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;
         dock.user = authService.getCurrentUser().username;
-        dock.path = "../../../../../../../public/media/" + fileName;
-        dock.select = true;
-        
+        dock.path = "/media/" + fileName + '.' + format;
+        /* dock.select = true; */
+        saveFiles(dock);
       });
     }
   }
-  async function handleSubmit(index) {
+  async function saveFiles(file) {
+    
     let exception = false;
-    console.log(Id[index+1]);
-    setState((draft) => {
-      const dock = draft.find((dock) => dock.id === index + 1);
-      dock.select = false;
-      
-    }); 
     try {
-      await axios
-        .post("http://localhost:4000/upload", State, {
+      // eslint-disable-next-line eqeqeq
+      if (file.fileName != 'file' ){
+      axios
+        .post("http://localhost:4000/upload", file, {
           headers: {
             "content-type": "multipart/form-data",
           },
@@ -69,24 +78,27 @@ function Normale({ ModeChoice, setModeChoice }) {
         .catch((error) => {
           console.log(error);
         });
+      }
     } catch (ex) {
       console.log(ex);
       exception = true;
     } finally {
       if (!exception) {
         try {
-          await axios.put("http://localhost:4000/file/" + Id[index+1]._id, {
-            id: State[0].id,
-            fileName: State[0].fileName,
-            format: State[0].format,
-            path: State[0].path,
+          axios.put("http://localhost:4000/file/" + file._id, {
+            fileName: file.fileName,
+            format: file.format,
+            path: file.path,
+            duration: file.duration,
           });
         } catch (ex) {
           console.log(ex);
         }
       }
     }
-  }
+  
+}
+  
 
   return (
     <div>
@@ -101,24 +113,35 @@ function Normale({ ModeChoice, setModeChoice }) {
           </thead>
           {State &&
             State.map((file, index) => (
-              <tbody>
+              <tbody key={file._id}>
                 <tr
                   /*  onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
                   onDragEnd={drop} */
-                  key={index}
-                  draggable
+                  key={file._id}
+                  /* draggable */
                 >
-                  <td key={file.id}>{file.fileName}</td>
+                  <td>{file.fileName}</td>
+                  
                   <td>
-                    <Form.Control
-                      onChange={(e) => onFileUpload(e, index)}
-                      type="file"
-                      name="file"
-                    />
-                  </td>
+                      
+                      <input
+                        type="file"
+                        id={"file" + index}
+                        onChange={(e) => onFileUpload(e, file)}
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor={"file" + index}>
+{file.fileName == 'file' ?  
+                        <span className="fa fa-edit edit-icon">
+                          <MdFileDownload className="downloadIcone" />
+                        </span>
+                        
+                      : <img className="imgUpload" alt="test" src={file.path} />}
+                     </label>
+                    </td>
                   <td>
-                    <Button
+                    {/*  <Button
                       className="ButtonUp"
                       variant="secondary"
                       onClick={(e) => DeleteFile(e, file)}
@@ -130,8 +153,7 @@ function Normale({ ModeChoice, setModeChoice }) {
                       className="btn-large waves-effect blue-grey darken-4 waves-orange"
                     >
                       Ajouter ce média
-                    </Button> : ""}
-                    
+                    </Button> : ""} */}
                   </td>
                 </tr>
               </tbody>
@@ -142,7 +164,7 @@ function Normale({ ModeChoice, setModeChoice }) {
         className="buttonActive"
         variant="success"
         type="submit"
-        onClick={() => setModeChoice(1)}
+        onClick={() => changeMode("1", ModeChoice)}
       >
         <AiOutlineCheck />
       </Button>

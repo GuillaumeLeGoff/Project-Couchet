@@ -1,38 +1,33 @@
-import { Button, Form, Table } from "react-bootstrap";
-import { useImmer } from "use-immer";
-/* import { useRef } from "react"; */
-import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
-import { useEffect } from "react";
 import axios from "axios";
+import { useEffect, useRef } from "react";
+import { Button, Form, Table } from "react-bootstrap";
+import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
+import { FaSave } from "react-icons/fa";
+import { MdOutlineDeleteOutline, MdFileDownload } from "react-icons/md";
+import { useImmer } from "use-immer";
 import authService from "../../../../../services/authService";
-function MultiScreen({ ModeChoice, setModeChoice }) {
+import "../../../../../styles/App.css";
+
+function MultiScreen({ ModeChoice, changeMode }) {
   var [State, setState] = useImmer([]);
-  var [Id, setId] = useImmer([]);
-  /* const dragItem = useRef();
-  const dragOverItem = useRef(); */
+
+  const dragItem = useRef();
+  const dragOverItem = useRef();
   const URL_API = "http://localhost:4000";
   useEffect(() => {
     getFile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getFile() {
     const data = {};
-    await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
-      console.log(result.data.slice(4));
+    axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
       setState(result.data.slice(4));
-      setId(result.data[0]._id);
-      /* State.forEach((file,index) => {
-        setState((draft) => {
-          const dock = draft.find((dock) => dock._id === Id[index+5]._id);
-          dock.id= index+5;
-        });  
-      }); */
     });
-    console.log(State);
   }
 
   //////////////////DRAG AND DROP//////////////////
-  /* function dragStart(e, position) {
+  function dragStart(e, position) {
     dragItem.current = position;
     console.log(e.target.innerHTML);
   }
@@ -43,21 +38,22 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
   }
 
   function drop(e) {
-    const copyListItems = [...MultiScreen];
+    const copyListItems = [...State];
     const dragItemContent = copyListItems[dragItem.current];
     copyListItems.splice(dragItem.current, 1);
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
-    setMultiScreen(copyListItems);
-  } */
+    setState(copyListItems);
+  }
   ////////////////////////////////////////////////
 
-  //////////////////OPTION FILE///////////////////
+  ////////////////// FILE///////////////////
   async function NewFile() {
-    await axios
+    axios
       .post(URL_API + "/files", {
         fileName: "file",
+        duration: 1,
       })
       .then((res) => {
         console.log(res);
@@ -65,30 +61,29 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
       });
     getFile();
   }
-  async function handleSubmit(index, file) {
-    console.log(file);
-    setState((draft) => {
-      const dock = draft.find((dock) => dock._id === file._id);
-      dock.select = false;
-    });
+
+  async function saveFiles(file) {
     let exception = false;
     try {
-      await axios
-        .post("http://localhost:4000/upload", file, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // eslint-disable-next-line eqeqeq
+      if (file.fileName != "file") {
+        axios
+          .post("http://localhost:4000/upload", file, {
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     } catch (ex) {
       console.log(ex);
       exception = true;
     } finally {
       if (!exception) {
         try {
-          await axios.put("http://localhost:4000/file/" + file._id, {
+          axios.put("http://localhost:4000/file/" + file._id, {
             fileName: file.fileName,
             format: file.format,
             path: file.path,
@@ -100,35 +95,89 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
       }
     }
   }
+  async function saveAllFile() {
+    State.forEach((file) => {
+      axios.put("http://localhost:4000/file/" + file._id, {
+        duration: file.duration,
+      });
+    });
+  }
 
-  function onFileChange(value, file) {
-    const fileName = value.target.files[0].name;
+  async function onFileChange(value, file, index) {
+    var text = "";
+    var possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 10; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    const fileName = "timeScreen_" + text;
     const format = value.target.files[0].type.split("/").pop();
     if (value.target.files[0] != null) {
+      if (file.fileName != "file") {
+        axios
+          .post(URL_API + "/delete", {
+            fileName: file.fileName,
+            format: file.format,
+          })
+          .then((res) => {
+            console.log(res);
+            console.log(res.data);
+          });
+      }
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;
         dock.user = authService.getCurrentUser().username;
-        dock.path = "../../../../../../../public/media/" + fileName;
-        dock.select = true;
+        dock.path = "/media/" + fileName + "." + format;
+        saveFiles(dock);
       });
     }
   }
   function onTimeChange(value, file) {
-       setState((draft) => {
-        const dock = draft.find((dock) => dock._id === file._id);
-        dock.duration = value.target.valueAsNumber;
-      });
-    
+    setState((draft) => {
+      const dock = draft.find((dock) => dock._id === file._id);
+      dock.duration = value.target.valueAsNumber;
+    });
   }
   async function DeleteFile(file) {
-    await axios.delete(URL_API + "/file/" + file._id).then((res) => {
-      console.log(res);
-      console.log(res.data);
-    });
-    getFile();
+    let exception = false;
+    let exception2 = false;
+    try {
+      // eslint-disable-next-line eqeqeq
+      if (file.fileName != "file") {
+        axios
+          .post(URL_API + "/delete", {
+            fileName: file.fileName,
+            format: file.format,
+          })
+          .then((res) => {
+            console.log(res);
+            console.log(res.data);
+          });
+      }
+    } catch (ex) {
+      console.log(ex);
+      exception = true;
+    } finally {
+      try {
+        if (!exception) {
+          axios.delete(URL_API + "/file/" + file._id).then((res) => {
+            console.log(res);
+            console.log(res.data);
+          });
+        }
+      } catch (ex) {
+        exception2 = true;
+        console.log(ex);
+      } finally {
+        if (!exception2) {
+          getFile();
+        }
+      }
+    }
   }
 
   /////////////////////////////////////////////////
@@ -147,11 +196,11 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
           </thead>
           {State &&
             State.map((file, index) => (
-              <tbody>
+              <tbody key={file._id}>
                 <tr
-                  /*   onDragStart={(e) => dragStart(e, index)}
+                  onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop} */
+                  onDragEnd={drop}
                   key={index}
                   draggable
                 >
@@ -161,25 +210,37 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
                     <td></td>
                   ) : (
                     <td>
-                      <Form.Control
-                        onChange={(e) => onFileChange(e, file)}
+                      <input
                         type="file"
-                        name="file"
+                        id={"file" + index}
+                        onChange={(e) => onFileChange(e, file)}
+                        style={{ display: "none" }}
                       />
+                      <label htmlFor={"file" + index}>
+                        {file.fileName == "file" ? (
+                          <span className="fa fa-edit edit-icon">
+                            <MdFileDownload className="downloadIcone" />
+                          </span>
+                        ) : (
+                          <img
+                            className="imgUpload"
+                            alt="test"
+                            src={file.path}
+                          />
+                        )}
+                      </label>
                     </td>
                   )}
-                  {file.id === 4 ? (
-                    <td></td>
-                  ) : (
-                    <td>
-                      <Form.Control
-                        onChange={(e) => onTimeChange(e, file)}
-                        type="number"
-                        value={file.duration}
-                        min="1"
-                      />
-                    </td>
-                  )}
+
+                  <td>
+                    <Form.Control
+                      onChange={(e) => onTimeChange(e, file)}
+                      type="number"
+                      value={file.duration}
+                      min="1"
+                    />
+                  </td>
+
                   {file.id === 4 ? (
                     <td></td>
                   ) : (
@@ -187,9 +248,15 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
                       {file.id === 0 ? (
                         ""
                       ) : (
-                        <Button onClick={() => DeleteFile(file)}>X</Button>
+                        <Button
+                          onClick={() => DeleteFile(file)}
+                          className="ButtonUp"
+                          variant="secondary"
+                        >
+                          <MdOutlineDeleteOutline />
+                        </Button>
                       )}
-                      {file.select ? (
+                      {/* {file.select ? (
                         <Button
                           onClick={() => handleSubmit(index, file)}
                           className="btn-large waves-effect blue-grey darken-4 waves-orange"
@@ -198,7 +265,7 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
                         </Button>
                       ) : (
                         ""
-                      )}
+                      )} */}
                     </td>
                   )}
                 </tr>
@@ -215,12 +282,15 @@ function MultiScreen({ ModeChoice, setModeChoice }) {
         <AiOutlineFileAdd />
       </Button>
       <Button
-        className="buttonActive"
+        className="buttonActive margin50"
         variant="success"
         type="submit"
-        onClick={() => setModeChoice(1)}
+        onClick={() => changeMode("3")}
       >
         <AiOutlineCheck />
+      </Button>
+      <Button className="buttonActive" variant="success" onClick={saveAllFile}>
+        <FaSave />
       </Button>
     </div>
   );

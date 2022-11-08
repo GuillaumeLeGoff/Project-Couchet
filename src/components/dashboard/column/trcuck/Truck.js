@@ -21,6 +21,7 @@ function Truck() {
 
   useEffect(() => {
     waitLoading();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   var [LoadingTruck, setLoadingTruck] = useImmer([]);
@@ -75,6 +76,7 @@ function Truck() {
     id2 = id2 - 6;
 
     LoadingTruck.forEach((dock, index) => {
+      // eslint-disable-next-line eqeqeq
       if (docks.dockIndex == dock.dockIndex) {
         setLoadingTruck((draft) => {
           const dock = draft.find((dock) => dock.id === index);
@@ -139,7 +141,7 @@ function Truck() {
   }
   //POST one
   async function postTruck(truck) {
-    axios
+    await axios
       .put(URL_API + "/truck/" + truck._id, {
         id: truck.id,
         dockIndex: truck.dockIndex,
@@ -167,7 +169,7 @@ function Truck() {
           </thead>
 
           {LoadingTruck.map((docks) => (
-            <tbody>
+            <tbody key={docks._id} >
               <tr>
                 <td className="inputDock">
                   {" "}
@@ -210,7 +212,7 @@ function Truck() {
             </tr>
           </thead>
           {NextTruck.map((docks) => (
-            <tbody>
+            <tbody key={docks._id} >
               <tr>
                 <td className="inputDock">
                   {" "}

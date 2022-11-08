@@ -1,19 +1,20 @@
 import { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
-import { MdOutlineDeleteOutline } from "react-icons/md";
+import { MdFileDownload } from "react-icons/md";
 import { AiOutlineCheck } from "react-icons/ai";
 import axios from "axios";
 import authService from "../../../../../services/authService";
+/* import { FaSave } from "react-icons/fa"; */
 import { useImmer } from "use-immer";
 
 /* var bcrypt = require("bcryptjs"); */
-function FullScreen({ ModeChoice, setModeChoice }) {
+function FullScreen({ ModeChoice, changeMode }) {
   var [State, setState] = useImmer([]);
-  var [Id, setId] = useImmer([]);
   const URL_API = "http://localhost:4000";
 
   useEffect(() => {
     getFile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getFile() {
@@ -21,47 +22,66 @@ function FullScreen({ ModeChoice, setModeChoice }) {
     await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
       console.log(result.data.slice(0, 1));
       setState(result.data.slice(0, 1));
-      setId(result.data[0]._id);
     });
   }
 
-  function onFileUpload(value) {
-    const fileName = value.target.files[0].name;
-    const format = value.target.files[0].type.split("/").pop();
-
-    setState((draft) => {
-      const dock = draft.find((dock) => dock.id === 0);
-      dock.file = value.target.files[0];
-      dock.fileName = fileName;
-      dock.format = format;
-      dock.user = authService.getCurrentUser().username;
-      dock.path = "../../../../../../../public/media/" + fileName;
-    });
-    
+  function onFileUpload(value, file) {
+    if (value.target.files[0] != null) {
+      var text = "";
+      var possible =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (var i = 0; i < 20; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      const fileName = "fullScreen_" + text;
+      console.log(fileName);
+      const format = value.target.files[0].type.split("/").pop();
+      axios
+        .post(URL_API + "/delete", {
+          fileName: file.fileName,
+          format: file.format,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data);
+        });
+      setState((draft) => {
+        const dock = draft.find((dock) => dock.id === 0);
+        dock.file = value.target.files[0];
+        dock.fileName = fileName;
+        dock.format = format;
+        dock.user = authService.getCurrentUser().username;
+        dock.path = "/media/" + fileName + "." + format;
+        saveFiles(dock);
+      });
+    }
   }
-  async function handleSubmit() {
+  async function saveFiles(file) {
     let exception = false;
     try {
-      await axios
-        .post("http://localhost:4000/upload", State, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // eslint-disable-next-line eqeqeq
+      if (file.fileName != "file") {
+        axios
+          .post("http://localhost:4000/upload", file, {
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     } catch (ex) {
       console.log(ex);
       exception = true;
     } finally {
       if (!exception) {
         try {
-          await axios.put("http://localhost:4000/file/" + Id, {
-            id: State[0].id,
-            fileName: State[0].fileName,
-            format: State[0].format,
-            path: State[0].path,
+          axios.put("http://localhost:4000/file/" + file._id, {
+            fileName: file.fileName,
+            format: file.format,
+            path: file.path,
+            duration: file.duration,
           });
         } catch (ex) {
           console.log(ex);
@@ -76,57 +96,62 @@ function FullScreen({ ModeChoice, setModeChoice }) {
         <Table striped>
           <thead>
             <tr>
+              <th>Nom</th>
               <th>Overview</th>
-              <th></th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td className="image-upload">
-                <label>
-                  <label></label>
-                  {/* <IconContext.Provider value={{ size: "3em", className: "global-class-name" }}>
-                    <AiOutlineFileAdd />
-                  </IconContext.Provider> */}
-                </label>
+            {State.map((file, index) => (
+              <tr key={file._id}>
+                <td>
+                  <p key={index}>{file.fileName}</p>
+                </td>
+                <td>
+                  {/* <input
+                    id="file-input"
+                    type="file"
+                    onChange={(e) => onFileUpload(e, file)}
+                  />
+                  <img className="imgUpload" alt="test" src={file.path} /> */}
 
-                <input
-                  id="file-input"
-                  type="file"
-                  onChange={(e) => onFileUpload(e)}
-                />
-                
-                {State.map((docks , index) => (
-                  <div>
-                    <p  key={index} >{docks.fileName}</p>
+                  <input
+                    type="file"
+                    id={"file" + index}
+                    onChange={(e) => onFileUpload(e, file)}
+                    style={{ display: "none" }}
+                  />
+                  <label htmlFor={"file" + index}>
+                    {file.fileName == "file" ? (
+                      <span className="fa fa-edit edit-icon">
+                        <MdFileDownload className="downloadIcone" />
+                      </span>
+                    ) : (
+                      <img className="imgUpload" alt="test" src={file.path} />
+                    )}
+                  </label>
+                </td>
+              </tr>
+            ))}
 
-                  </div>
-                ))}
-              </td>
-              <td>
+            {/*  <td>
                 <Button className="ButtonUp" variant="secondary">
-                  <MdOutlineDeleteOutline value={{ color: "blue" }} />
+                  <MdOutlineDeleteOutline />
                 </Button>
-              </td>
-            </tr>
+              </td> */}
           </tbody>
         </Table>
       </Form>
       <Button
-        className="buttonActive"
+        className="buttonActive margin50"
         variant="success"
-        onClick={() => setModeChoice(1)}
+        onClick={() => changeMode("2")}
       >
         <AiOutlineCheck />
       </Button>
-      <Button
-        onClick={() => handleSubmit()}
-        className="btn-large waves-effect blue-grey darken-4 waves-orange"
-      >
-        {" "}
-        Ajouter ce média
-      </Button>
+      {/* <Button className="buttonActive " variant="success" onClick={() => handleSubmit()}>
+        <FaSave />
+      </Button> */}
     </div>
   );
 }
