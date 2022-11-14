@@ -10,7 +10,6 @@ function Normale({ ModeChoice, changeMode }) {
   const URL_API = "http://localhost:4000";
   var [State, setState] = useImmer([]);
 
-
   useEffect(() => {
     getFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -20,19 +19,17 @@ function Normale({ ModeChoice, changeMode }) {
     const data = {};
     await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
       setState(result.data.slice(1, 4));
-      
     });
   }
 
- /*  function DeleteFile(e, file) {
+  /*  function DeleteFile(e, file) {
      const id = file.id;
 
     setState((draft) => {
       const file1 = draft.findIndex((file1) => file1.id === id);
     });
   } */
-  function onFileUpload(value, file) {
-    console.log(value);
+   function onFileUpload(value, file) {
     if (value.target.files[0] != null) {
       var text = "";
       var possible =
@@ -40,44 +37,43 @@ function Normale({ ModeChoice, changeMode }) {
       for (var i = 0; i < 20; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
       }
-      const fileName = "splitScreen_"+ text;
+      const fileName = "splitScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-      axios
-          .post(URL_API + "/delete", {
-            fileName: file.fileName,
-            format: file.format,
-          })
-          .then((res) => {
-            console.log(res);
-            console.log(res.data);
-          });
+       axios
+        .post(URL_API + "/delete", {
+          fileName: file.fileName,
+          format: file.format,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data);
+        });
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;
         dock.user = authService.getCurrentUser().username;
-        dock.path = "/media/" + fileName + '.' + format;
+        dock.path = "/media/" + fileName + "." + format;
         /* dock.select = true; */
         saveFiles(dock);
       });
     }
   }
   async function saveFiles(file) {
-    
     let exception = false;
     try {
       // eslint-disable-next-line eqeqeq
-      if (file.fileName != 'file' ){
-      axios
-        .post("http://localhost:4000/upload", file, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (file.fileName != "file") {
+        axios
+          .post("http://localhost:4000/upload", file, {
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     } catch (ex) {
       console.log(ex);
@@ -96,9 +92,7 @@ function Normale({ ModeChoice, changeMode }) {
         }
       }
     }
-  
-}
-  
+  }
 
   return (
     <div>
@@ -113,7 +107,7 @@ function Normale({ ModeChoice, changeMode }) {
           </thead>
           {State &&
             State.map((file, index) => (
-              <tbody key={file._id}>
+              <tbody  key={file._id}>
                 <tr
                   /*  onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
@@ -122,24 +116,24 @@ function Normale({ ModeChoice, changeMode }) {
                   /* draggable */
                 >
                   <td>{file.fileName}</td>
-                  
+
                   <td>
-                      
-                      <input
-                        type="file"
-                        id={"file" + index}
-                        onChange={(e) => onFileUpload(e, file)}
-                        style={{ display: 'none' }}
-                      />
-                      <label htmlFor={"file" + index}>
-{file.fileName == 'file' ?  
+                    <input
+                      type="file"
+                      id={"file" + index}
+                      onChange={(e) => onFileUpload(e, file)}
+                      style={{ display: "none" }}
+                    />
+                    <label htmlFor={"file" + index}>
+                      {file.fileName == "file" ? (
                         <span className="fa fa-edit edit-icon">
                           <MdFileDownload className="downloadIcone" />
                         </span>
-                        
-                      : <img className="imgUpload" alt="test" src={file.path} />}
-                     </label>
-                    </td>
+                      ) : (
+                        <img   className="imgUpload" alt="test" src={file.path} />
+                      )}
+                    </label>
+                  </td>
                   <td>
                     {/*  <Button
                       className="ButtonUp"
