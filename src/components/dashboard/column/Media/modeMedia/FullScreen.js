@@ -2,15 +2,15 @@ import { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { MdFileDownload } from "react-icons/md";
 import { AiOutlineCheck } from "react-icons/ai";
-import axios from "axios";
 import authService from "../../../../../services/authService";
+import fileService from "../../../../../services/fileService";
+import uploadService from "../../../../../services/uploadService";
 /* import { FaSave } from "react-icons/fa"; */
 import { useImmer } from "use-immer";
 
 /* var bcrypt = require("bcryptjs"); */
 function FullScreen({ ModeChoice, changeMode }) {
   var [State, setState] = useImmer([]);
-  const URL_API = "http://localhost:4000";
 
   useEffect(() => {
     getFile();
@@ -18,14 +18,13 @@ function FullScreen({ ModeChoice, changeMode }) {
   }, []);
 
   async function getFile() {
-    const data = {};
-    await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
-      
+    fileService.get().then((result) => {
       setState(result.data.slice(0, 1));
     });
   }
 
   function onFileUpload(value, file) {
+    //Nom fichier aléatoire
     if (value.target.files[0] != null) {
       var text = "";
       var possible =
@@ -34,17 +33,9 @@ function FullScreen({ ModeChoice, changeMode }) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       const fileName = "fullScreen_" + text;
-      
       const format = value.target.files[0].type.split("/").pop();
-      axios
-        .post(URL_API + "/delete", {
-          fileName: file.fileName,
-          format: file.format,
-        })
-        .then((res) => {
-          console.log(res);
-          console.log(res.data);
-        });
+      //delete file
+      uploadService.delete(file);
       setState((draft) => {
         const dock = draft.find((dock) => dock.id === 0);
         dock.file = value.target.files[0];
@@ -57,37 +48,11 @@ function FullScreen({ ModeChoice, changeMode }) {
     }
   }
   async function saveFiles(file) {
-    let exception = false;
-    try {
-      // eslint-disable-next-line eqeqeq
-      if (file.fileName != "file") {
-        axios
-          .post("http://localhost:4000/upload", file, {
-            headers: {
-              "content-type": "multipart/form-data",
-            },
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    } catch (ex) {
-      console.log(ex);
-      exception = true;
-    } finally {
-      if (!exception) {
-        try {
-          axios.put("http://localhost:4000/file/" + file._id, {
-            fileName: file.fileName,
-            format: file.format,
-            path: file.path,
-            duration: file.duration,
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-      }
+    // eslint-disable-next-line eqeqeq
+    if (file.fileName != "file") {
+      uploadService.upload(file);
     }
+    fileService.update(file);
   }
 
   return (

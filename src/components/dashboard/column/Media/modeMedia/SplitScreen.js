@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { MdFileDownload } from "react-icons/md";
-import axios from "axios";
 import { AiOutlineCheck } from "react-icons/ai";
 import authService from "../../../../../services/authService";
+import fileService from "../../../../../services/fileService";
+import uploadService from "../../../../../services/uploadService";
 import "../../../../../styles/App.css";
 function Normale({ ModeChoice, changeMode }) {
   const URL_API = "http://localhost:4000";
@@ -16,20 +17,12 @@ function Normale({ ModeChoice, changeMode }) {
   }, []);
 
   async function getFile() {
-    const data = {};
-    await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
+    fileService.get().then((result) => {
       setState(result.data.slice(1, 4));
     });
   }
 
-  /*  function DeleteFile(e, file) {
-     const id = file.id;
-
-    setState((draft) => {
-      const file1 = draft.findIndex((file1) => file1.id === id);
-    });
-  } */
-   function onFileUpload(value, file) {
+  function onFileUpload(value, file) {
     if (value.target.files[0] != null) {
       var text = "";
       var possible =
@@ -39,15 +32,7 @@ function Normale({ ModeChoice, changeMode }) {
       }
       const fileName = "splitScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-       axios
-        .post(URL_API + "/delete", {
-          fileName: file.fileName,
-          format: file.format,
-        })
-        .then((res) => {
-          console.log(res);
-          console.log(res.data);
-        });
+      uploadService.delete(file);
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
         dock.file = value.target.files[0];
@@ -61,37 +46,11 @@ function Normale({ ModeChoice, changeMode }) {
     }
   }
   async function saveFiles(file) {
-    let exception = false;
-    try {
-      // eslint-disable-next-line eqeqeq
-      if (file.fileName != "file") {
-        axios
-          .post("http://localhost:4000/upload", file, {
-            headers: {
-              "content-type": "multipart/form-data",
-            },
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    } catch (ex) {
-      console.log(ex);
-      exception = true;
-    } finally {
-      if (!exception) {
-        try {
-          axios.put("http://localhost:4000/file/" + file._id, {
-            fileName: file.fileName,
-            format: file.format,
-            path: file.path,
-            duration: file.duration,
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-      }
+    // eslint-disable-next-line eqeqeq
+    if (file.fileName != "file") {
+      uploadService.upload(file);
     }
+    fileService.update(file);
   }
 
   return (
@@ -107,7 +66,7 @@ function Normale({ ModeChoice, changeMode }) {
           </thead>
           {State &&
             State.map((file, index) => (
-              <tbody  key={file._id}>
+              <tbody key={file._id}>
                 <tr
                   /*  onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
@@ -130,7 +89,7 @@ function Normale({ ModeChoice, changeMode }) {
                           <MdFileDownload className="downloadIcone" />
                         </span>
                       ) : (
-                        <img   className="imgUpload" alt="test" src={file.path} />
+                        <img className="imgUpload" alt="test" src={file.path} />
                       )}
                     </label>
                   </td>

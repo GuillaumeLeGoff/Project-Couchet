@@ -6,6 +6,8 @@ import { FaSave } from "react-icons/fa";
 import { MdOutlineDeleteOutline, MdFileDownload } from "react-icons/md";
 import { useImmer } from "use-immer";
 import authService from "../../../../../services/authService";
+import fileService from "../../../../../services/fileService";
+import uploadService from "../../../../../services/uploadService";
 import "../../../../../styles/App.css";
 
 function MultiScreen({ ModeChoice, changeMode }) {
@@ -20,8 +22,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
   }, []);
 
   async function getFile() {
-    const data = {};
-     axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
+    fileService.get().then((result) => {
       setState(result.data.slice(4));
     });
   }
@@ -29,12 +30,10 @@ function MultiScreen({ ModeChoice, changeMode }) {
   //////////////////DRAG AND DROP//////////////////
   function dragStart(e, position) {
     dragItem.current = position;
-    
   }
 
   function dragEnter(e, position) {
     dragOverItem.current = position;
-    
   }
 
   function drop(e) {
@@ -44,111 +43,54 @@ function MultiScreen({ ModeChoice, changeMode }) {
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
-    
+
     setState(copyListItems);
   }
   ////////////////////////////////////////////////
 
   ////////////////// FILE///////////////////
-  async function NewFile() {
-     axios
-      .post(URL_API + "/files", {
-        fileName: "file",
-        duration: 1,
-      })
-      .then((res) => {
-        console.log(res);
-        console.log(res.data);
-      });
+  function NewFile() {
+    const file = {
+      fileName: "file",
+      duration: 1,
+    };
+    fileService.post(file);
     getFile();
   }
 
   async function saveFiles(file) {
-    let exception = false;
-    try {
-      // eslint-disable-next-line eqeqeq
-      if (file.fileName != "file") {
-         axios
-          .post("http://localhost:4000/upload", file, {
-            headers: {
-              "content-type": "multipart/form-data",
-            },
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    } catch (ex) {
-      console.log(ex);
-      exception = true;
-    } finally {
-      if (!exception) {
-        try {
-           axios.put("http://localhost:4000/file/" + file._id, {
-            fileName: file.fileName,
-            format: file.format,
-            path: file.path,
-            duration: file.duration,
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-      }
+    // eslint-disable-next-line eqeqeq
+    if (file.fileName != "file") {
+      uploadService.upload(file);
     }
+    fileService.update(file);
   }
 
   async function saveAllFile() {
     console.log(State);
     State.forEach(async (file) => {
-     /*  await axios.delete("http://localhost:4000/file/" + file._id);
-      await axios.post(URL_API + "/files", {
-        duration: file.duration,
-        fileName: file.fileName,
-        path: file.path,
-        format: file.format 
-      }); */
-
-      axios.all([
-        await axios.delete("http://localhost:4000/file/" + file._id), 
-        await axios.post(URL_API + "/files", {
-          duration: file.duration,
-          fileName: file.fileName,
-          path: file.path,
-          format: file.format 
-        })
-      ])
-      .then(axios.spread((data1, data2) => {
-        // output of req.
-        console.log('data1', data1, 'data2', data2)
-      }));
-      window.location.reload(false);
-
-   /*  try {
-      const res =  await axios.delete("http://localhost:4000/file/" + file._id);
-      console.log(res);
-    } catch (ex) {
-      console.log(ex);
-      
-    } finally {
-      try {        
-        const res = await axios.post(URL_API + "/files", {
-        duration: file.duration,
-        fileName: file.fileName,
-        path: file.path,
-        format: file.format 
-      });
-      console.log(res);
-      }catch (ex) {
-        console.log(ex);
-       
-      }
-    } */
-  });
-}
-
+      fileService.delete(file);
+      axios
+        .all([
+          await axios.delete("http://localhost:4000/file/" + file._id),
+          await axios.post(URL_API + "/files", {
+            duration: file.duration,
+            fileName: file.fileName,
+            path: file.path,
+            format: file.format,
+          }),
+        ])
+        .then(
+          axios.spread((data1, data2) => {
+            // output of req.
+            console.log("data1", data1, "data2", data2);
+          })
+        );
+      window.location.reload();
+    });
+  }
 
   async function onFileChange(value, file, index) {
-   
     var text = "";
     var possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -160,16 +102,9 @@ function MultiScreen({ ModeChoice, changeMode }) {
 
     const format = value.target.files[0].type.split("/").pop();
     if (value.target.files[0] != null) {
+      // eslint-disable-next-line eqeqeq
       if (file.fileName != "file") {
-         axios
-          .post(URL_API + "/delete", {
-            fileName: file.fileName,
-            format: file.format,
-          })
-          .then((res) => {
-            console.log(res);
-            console.log(res.data);
-          });
+        uploadService.delete(file);
       }
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
@@ -188,41 +123,13 @@ function MultiScreen({ ModeChoice, changeMode }) {
       dock.duration = value.target.valueAsNumber;
     });
   }
+
   async function DeleteFile(file) {
-   
-    try {
-      // eslint-disable-next-line eqeqeq
-      if (file.fileName != "file") {
-          axios
-          .post(URL_API + "/delete", {
-            fileName: file.fileName,
-            format: file.format,
-          })
-          .then((res) => {
-            console.log(res);
-            console.log(res.data);
-          });
-      }
-    } catch (ex) {
-      console.log(ex);
-      
-    } finally {
-      try {
-        
-           axios.delete(URL_API + "/file/" + file._id).then((res) => {
-            console.log(res);
-            console.log(res.data);
-          });
-        
-      } catch (ex) {
-       
-        console.log(ex);
-      } finally {
-        
-         getFile();
-        
-      }
+    if (file.fileName != "file") {
+      uploadService.delete(file);
     }
+    fileService.delete(file);
+    getFile();
   }
 
   /////////////////////////////////////////////////
