@@ -156,8 +156,8 @@ function Truck() {
 
   return (
     <div className="Truck">
-      <h5 className="titleColumn">Truck</h5>
-      <h6 className="titleColumn">Loading</h6>
+      <h5 className="titleColumn">Camion</h5>
+      <h6 className="titleColumn">Chargement</h6>
       <Form>
         <Table striped variant="dark">
           <thead>
@@ -201,7 +201,7 @@ function Truck() {
             </tbody>
           ))}
         </Table>
-        <h6 className="titleColumn">Next</h6>
+        <h6 className="titleColumn">Prochain</h6>
         <Table striped variant="dark">
           <thead>
             <tr>

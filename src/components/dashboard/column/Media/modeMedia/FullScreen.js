@@ -20,7 +20,7 @@ function FullScreen({ ModeChoice, changeMode }) {
   async function getFile() {
     const data = {};
     await axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
-      console.log(result.data.slice(0, 1));
+      
       setState(result.data.slice(0, 1));
     });
   }
@@ -34,7 +34,7 @@ function FullScreen({ ModeChoice, changeMode }) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       const fileName = "fullScreen_" + text;
-      console.log(fileName);
+      
       const format = value.target.files[0].type.split("/").pop();
       axios
         .post(URL_API + "/delete", {

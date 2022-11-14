@@ -71,9 +71,9 @@ function Screen() {
       <Table striped>
         <thead>
           <tr>
-            <th>jour</th>
-            <th>start</th>
-            <th>end</th>
+            <th>Jour</th>
+            <th>Début</th>
+            <th>Fin</th>
           </tr>
         </thead>
         {State.map((time, index) => (

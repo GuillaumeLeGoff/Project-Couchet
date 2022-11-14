@@ -21,7 +21,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
 
   async function getFile() {
     const data = {};
-    axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
+     axios.get(URL_API + "/files", JSON.stringify(data)).then((result) => {
       setState(result.data.slice(4));
     });
   }
@@ -29,12 +29,12 @@ function MultiScreen({ ModeChoice, changeMode }) {
   //////////////////DRAG AND DROP//////////////////
   function dragStart(e, position) {
     dragItem.current = position;
-    console.log(e.target.innerHTML);
+    
   }
 
   function dragEnter(e, position) {
     dragOverItem.current = position;
-    console.log(e.target.innerHTML);
+    
   }
 
   function drop(e) {
@@ -44,13 +44,14 @@ function MultiScreen({ ModeChoice, changeMode }) {
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
+    
     setState(copyListItems);
   }
   ////////////////////////////////////////////////
 
   ////////////////// FILE///////////////////
   async function NewFile() {
-    axios
+     axios
       .post(URL_API + "/files", {
         fileName: "file",
         duration: 1,
@@ -67,7 +68,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
     try {
       // eslint-disable-next-line eqeqeq
       if (file.fileName != "file") {
-        axios
+         axios
           .post("http://localhost:4000/upload", file, {
             headers: {
               "content-type": "multipart/form-data",
@@ -83,7 +84,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
     } finally {
       if (!exception) {
         try {
-          axios.put("http://localhost:4000/file/" + file._id, {
+           axios.put("http://localhost:4000/file/" + file._id, {
             fileName: file.fileName,
             format: file.format,
             path: file.path,
@@ -95,27 +96,72 @@ function MultiScreen({ ModeChoice, changeMode }) {
       }
     }
   }
+
   async function saveAllFile() {
-    State.forEach((file) => {
-      axios.put("http://localhost:4000/file/" + file._id, {
+    console.log(State);
+    State.forEach(async (file) => {
+     /*  await axios.delete("http://localhost:4000/file/" + file._id);
+      await axios.post(URL_API + "/files", {
         duration: file.duration,
+        fileName: file.fileName,
+        path: file.path,
+        format: file.format 
+      }); */
+
+      axios.all([
+        await axios.delete("http://localhost:4000/file/" + file._id), 
+        await axios.post(URL_API + "/files", {
+          duration: file.duration,
+          fileName: file.fileName,
+          path: file.path,
+          format: file.format 
+        })
+      ])
+      .then(axios.spread((data1, data2) => {
+        // output of req.
+        console.log('data1', data1, 'data2', data2)
+      }));
+      window.location.reload(false);
+
+   /*  try {
+      const res =  await axios.delete("http://localhost:4000/file/" + file._id);
+      console.log(res);
+    } catch (ex) {
+      console.log(ex);
+      
+    } finally {
+      try {        
+        const res = await axios.post(URL_API + "/files", {
+        duration: file.duration,
+        fileName: file.fileName,
+        path: file.path,
+        format: file.format 
       });
-    });
-  }
+      console.log(res);
+      }catch (ex) {
+        console.log(ex);
+       
+      }
+    } */
+  });
+}
+
 
   async function onFileChange(value, file, index) {
+   
     var text = "";
     var possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 10; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-
     const fileName = "timeScreen_" + text;
+    /* const fileName = value.target.files[0].name; */
+
     const format = value.target.files[0].type.split("/").pop();
     if (value.target.files[0] != null) {
       if (file.fileName != "file") {
-        axios
+         axios
           .post(URL_API + "/delete", {
             fileName: file.fileName,
             format: file.format,
@@ -143,12 +189,11 @@ function MultiScreen({ ModeChoice, changeMode }) {
     });
   }
   async function DeleteFile(file) {
-    let exception = false;
-    let exception2 = false;
+   
     try {
       // eslint-disable-next-line eqeqeq
       if (file.fileName != "file") {
-        axios
+          axios
           .post(URL_API + "/delete", {
             fileName: file.fileName,
             format: file.format,
@@ -160,22 +205,22 @@ function MultiScreen({ ModeChoice, changeMode }) {
       }
     } catch (ex) {
       console.log(ex);
-      exception = true;
+      
     } finally {
       try {
-        if (!exception) {
-          axios.delete(URL_API + "/file/" + file._id).then((res) => {
+        
+           axios.delete(URL_API + "/file/" + file._id).then((res) => {
             console.log(res);
             console.log(res.data);
           });
-        }
+        
       } catch (ex) {
-        exception2 = true;
+       
         console.log(ex);
       } finally {
-        if (!exception2) {
-          getFile();
-        }
+        
+         getFile();
+        
       }
     }
   }
@@ -206,7 +251,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
                 >
                   <td key={index}>{file.fileName}</td>
 
-                  {file.id === 4 ? (
+                  {file.fileName === "écran Camion" ? (
                     <td></td>
                   ) : (
                     <td>
@@ -241,7 +286,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
                     />
                   </td>
 
-                  {file.id === 4 ? (
+                  {file.fileName === "écran Camion" ? (
                     <td></td>
                   ) : (
                     <td>
