@@ -1,26 +1,24 @@
-import axios from "axios";
+
 import React from "react";
 import { useEffect } from "react";
 import { Button, Table } from "react-bootstrap";
 import { FaSave } from "react-icons/fa";
 import { RiShutDownLine } from "react-icons/ri";
 import { useImmer } from "use-immer";
-
+import ModeService from '../../../../services/modeService'
+import VeilleService from '../../../../services/veilleService'
 function Screen() {
   var [State, setState] = useImmer([]);
-  const URL_API = "http://localhost:4000";
   useEffect(() => {
     getVeille();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getVeille() {
-    const data = {};
-    await axios
-      .get(URL_API + "/veille", JSON.stringify(data))
-      .then((result) => {
-        setState(result.data);
-      });
+    VeilleService.getVeille().then((result) => {
+      console.log(result.data);
+      setState(result.data);
+    });
   }
   function timeStopChange(e, time) {
     setState((draft) => {
@@ -41,25 +39,15 @@ function Screen() {
   }
 
   async function saveTime() {
-    State.forEach((file) => {
-      axios
-        .put(URL_API + "/veille/" + file._id, {
-          stop: file.stop,
-          start: file.start,
-        })
-        .then((result) => {
-          console.log(result.data);
-        });
+    State.forEach((veille) => {
+      VeilleService.Veille(veille).then((result) => {
+        console.log(result.data);
+        setState(result.data);
+      });
     });
   }
   async function switchOff(){
-      await axios
-      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
-        activeMode: 0
-      })
-      .then((result) => {
-        console.log(result.data);
-      });
+    ModeService.choiceMode(0);
       window.location.reload();
     }
 

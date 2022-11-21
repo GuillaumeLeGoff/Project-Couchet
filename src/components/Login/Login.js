@@ -144,13 +144,13 @@ export default class Login extends Component {
             className="LoginMargin"
           >
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>Enter Id</Form.Label>
               <Form.Control
                 value={this.state.username}
                 onChange={this.onChangeUsername}
                 validations={[required]}
                 type="texte"
-                placeholder="Enter email"
+                
               />
             </Form.Group>
 
@@ -162,7 +162,7 @@ export default class Login extends Component {
                 onChange={this.onChangePassword}
                 validations={[required]}
                 type="password"
-                placeholder="Password"
+                
               />
             </Form.Group>
             <Button

@@ -37,7 +37,7 @@ function FullScreen({ ModeChoice, changeMode }) {
       //delete file
       uploadService.delete(file);
       setState((draft) => {
-        const dock = draft.find((dock) => dock.id === 0);
+        const dock = draft.find((dock) => dock.id === file.id);
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;

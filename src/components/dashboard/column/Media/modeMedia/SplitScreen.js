@@ -8,7 +8,6 @@ import fileService from "../../../../../services/fileService";
 import uploadService from "../../../../../services/uploadService";
 import "../../../../../styles/App.css";
 function Normale({ ModeChoice, changeMode }) {
-  const URL_API = "http://192.168.100.72:4000";
   var [State, setState] = useImmer([]);
 
   useEffect(() => {
@@ -48,6 +47,7 @@ function Normale({ ModeChoice, changeMode }) {
   async function saveFiles(file) {
     // eslint-disable-next-line eqeqeq
     if (file.fileName != "file") {
+      console.log("upload");
       uploadService.upload(file);
     }
     fileService.update(file);

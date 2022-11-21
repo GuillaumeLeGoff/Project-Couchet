@@ -15,7 +15,6 @@ function MultiScreen({ ModeChoice, changeMode }) {
 
   const dragItem = useRef();
   const dragOverItem = useRef();
-  const URL_API = "http://192.168.100.72:4000";
   useEffect(() => {
     getFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,22 +69,12 @@ function MultiScreen({ ModeChoice, changeMode }) {
     console.log(State);
     State.forEach(async (file) => {
       fileService.delete(file);
-      axios
-        .all([
-          await axios.delete("http://192.168.100.72:4000" + file._id),
-          await axios.post(URL_API + "/files", {
-            duration: file.duration,
-            fileName: file.fileName,
-            path: file.path,
-            format: file.format,
-          }),
-        ])
-        .then(
-          axios.spread((data1, data2) => {
-            // output of req.
-            console.log("data1", data1, "data2", data2);
-          })
-        );
+      fileService.post({
+        duration: file.duration,
+        fileName: file.fileName,
+        path: file.path,
+        format: file.format,
+      });  
       window.location.reload();
     });
   }

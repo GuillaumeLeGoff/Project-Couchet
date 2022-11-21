@@ -5,7 +5,7 @@ import Nav from "react-bootstrap/Nav";
 import SplitScreen from "./modeMedia/SplitScreen";
 import TimeScreen from "./modeMedia/TimeScreen";
 import FullScreen from "./modeMedia/FullScreen";
-import axios from "axios";
+import ModeService from "../../../../services/modeService"
 import { useEffect } from "react";
 
 function Media() {
@@ -15,28 +15,18 @@ function Media() {
     getMode();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const URL_API = "http://localhost:4000";
+ 
 
   async function getMode() {
-    const data = {};
-    await axios.get(URL_API + "/modes", JSON.stringify(data)).then((result) => {
+    ModeService.getMode().then((result) => {
       setModeChoice(result.data);
       nav(result.data[0].activeMode)
     });
   }
   async function changeMode(mode){
-   
-    await axios
-    .put(URL_API + "/mode/"+ ModeChoice[0]._id, {
-      activeMode: mode
-    })
-    .then((result) => {
-      console.log(result.data);
-    });
+    ModeService.choiceMode(mode);
     getMode()
-
   }
-  
 
   function nav(mode) {
     if (mode === "1") {

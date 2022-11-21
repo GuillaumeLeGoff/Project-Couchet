@@ -1,7 +1,6 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import axios from "axios";
 import { FaArrowUp, FaSave } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useImmer } from "use-immer";
@@ -11,14 +10,13 @@ import React, { useEffect } from "react";
 import Come from "./State/Come";
 import Loading from "./State/Loading";
 import Wait from "./State/Wait";
+import TruckService from "../../../../services/truckService"
 <link
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
   rel="stylesheet"
 ></link>;
 
 function Truck() {
-  const URL_API = "http://localhost:4000";
-
   useEffect(() => {
     waitLoading();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,11 +118,9 @@ function Truck() {
       });
     }
   }
-  //GET all
+  //GET all Trucks
   async function getTruck() {
-    const data = {};
-    await axios
-      .get(URL_API + "/trucks", JSON.stringify(data))
+    TruckService.getTrucks()
       .then((result) => {
         setLoadingTruck(result.data.slice(0, 6));
         setNextTruck(result.data.slice(6, 12));
@@ -141,17 +137,7 @@ function Truck() {
   }
   //POST one
   async function postTruck(truck) {
-    await axios
-      .put(URL_API + "/truck/" + truck._id, {
-        id: truck.id,
-        dockIndex: truck.dockIndex,
-        plate: truck.plate,
-        state: truck.state,
-      })
-      .then((res) => {
-        console.log(res);
-        console.log(res.data);
-      });
+    TruckService.postTruck(truck)
   }
 
   return (
