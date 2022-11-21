@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useRef } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
@@ -10,7 +9,7 @@ import fileService from "../../../../../services/fileService";
 import uploadService from "../../../../../services/uploadService";
 import "../../../../../styles/App.css";
 
-function MultiScreen({ ModeChoice, changeMode }) {
+function MultiScreen({ changeMode }) {
   var [State, setState] = useImmer([]);
 
   const dragItem = useRef();
@@ -74,12 +73,13 @@ function MultiScreen({ ModeChoice, changeMode }) {
         fileName: file.fileName,
         path: file.path,
         format: file.format,
-      });  
+      });
       window.location.reload();
     });
   }
 
   async function onFileChange(value, file, index) {
+    console.log(value.target.files[0]);
     var text = "";
     var possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -87,8 +87,6 @@ function MultiScreen({ ModeChoice, changeMode }) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     const fileName = "timeScreen_" + text;
-    /* const fileName = value.target.files[0].name; */
-
     const format = value.target.files[0].type.split("/").pop();
     if (value.target.files[0] != null) {
       // eslint-disable-next-line eqeqeq
@@ -98,6 +96,7 @@ function MultiScreen({ ModeChoice, changeMode }) {
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
         dock.file = value.target.files[0];
+        dock.name = value.target.files[0].name;
         dock.fileName = fileName;
         dock.format = format;
         dock.user = authService.getCurrentUser().username;
@@ -112,8 +111,8 @@ function MultiScreen({ ModeChoice, changeMode }) {
       dock.duration = value.target.valueAsNumber;
     });
   }
-
   async function DeleteFile(file) {
+    // eslint-disable-next-line eqeqeq
     if (file.fileName != "file") {
       uploadService.delete(file);
     }
@@ -145,7 +144,12 @@ function MultiScreen({ ModeChoice, changeMode }) {
                   key={index}
                   draggable
                 >
-                  <td key={index}>{file.fileName}</td>
+                  {file.fileName === "écran Camion" ? (
+                  <td key={index}><strong >Écran Camion</strong></td>
+                  ) : (
+                    <td key={index}>{file.name}</td>
+                    )}
+
 
                   {file.fileName === "écran Camion" ? (
                     <td></td>
@@ -158,16 +162,26 @@ function MultiScreen({ ModeChoice, changeMode }) {
                         style={{ display: "none" }}
                       />
                       <label htmlFor={"file" + index}>
-                        {file.fileName == "file" ? (
+                        {file.fileName === "file" ? (
                           <span className="fa fa-edit edit-icon">
                             <MdFileDownload className="downloadIcone" />
                           </span>
                         ) : (
-                          <img
-                            className="imgUpload"
-                            alt="test"
-                            src={file.path}
-                          />
+                          <div>
+                            {file.format === "mp4" ? (
+                              <img
+                              className="imgUpload"
+                              alt="test"
+                              src={file.path}
+                            />
+                            ) : (
+                              <img
+                                className="imgUpload"
+                                alt="test"
+                                src={file.path}
+                              />
+                            )}
+                          </div>
                         )}
                       </label>
                     </td>
@@ -197,16 +211,6 @@ function MultiScreen({ ModeChoice, changeMode }) {
                           <MdOutlineDeleteOutline />
                         </Button>
                       )}
-                      {/* {file.select ? (
-                        <Button
-                          onClick={() => handleSubmit(index, file)}
-                          className="btn-large waves-effect blue-grey darken-4 waves-orange"
-                        >
-                          Ajouter ce média
-                        </Button>
-                      ) : (
-                        ""
-                      )} */}
                     </td>
                   )}
                 </tr>
