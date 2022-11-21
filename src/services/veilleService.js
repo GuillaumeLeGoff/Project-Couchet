@@ -1,5 +1,6 @@
 import axios from "axios";
-const URL_API = "http://localhost:4000";
+import Config from '../config.json'
+const URL_API = Config.SERVER_URL ;
 class VeilleService {
     Veille(mode) {
     return axios

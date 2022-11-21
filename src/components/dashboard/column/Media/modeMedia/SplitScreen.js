@@ -7,7 +7,7 @@ import authService from "../../../../../services/authService";
 import fileService from "../../../../../services/fileService";
 import uploadService from "../../../../../services/uploadService";
 import "../../../../../styles/App.css";
-function Normale({ ModeChoice, changeMode }) {
+function Normale({ changeMode }) {
   var [State, setState] = useImmer([]);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ function Normale({ ModeChoice, changeMode }) {
       uploadService.delete(file);
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
+        dock.name = value.target.files[0].name
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;
@@ -43,6 +44,7 @@ function Normale({ ModeChoice, changeMode }) {
         saveFiles(dock);
       });
     }
+    window.location.reload();
   }
   async function saveFiles(file) {
     // eslint-disable-next-line eqeqeq
@@ -74,7 +76,7 @@ function Normale({ ModeChoice, changeMode }) {
                   key={file._id}
                   /* draggable */
                 >
-                  <td>{file.fileName}</td>
+                  <td>{file.name}</td>
 
                   <td>
                     <input
@@ -117,7 +119,7 @@ function Normale({ ModeChoice, changeMode }) {
         className="buttonActive"
         variant="success"
         type="submit"
-        onClick={() => changeMode("1", ModeChoice)}
+        onClick={() => changeMode("1")}
       >
         <AiOutlineCheck />
       </Button>

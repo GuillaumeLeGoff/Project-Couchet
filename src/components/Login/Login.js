@@ -46,8 +46,6 @@ export default class Login extends Component {
       message: "",
       successful: false,
     });
-    /* this.form.validateAll(); */
-
     AuthService.register(this.state.username, this.state.password).then(
       (response) => {
         this.setState({
@@ -100,42 +98,6 @@ export default class Login extends Component {
     return (
       <div>
         <div className="login">
-          {/* <Form
-          onSubmit={this.handleRegister}
-          ref={(c) => {
-            this.form = c;
-          }}
-          style={{ justifyContent: "center" }}
-        >
-          {" "}
-          <div className="mb-3" controlId="formBasicEmail">
-            <label>Email address</label>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              value={this.state.username}
-              onChange={this.onChangeUsername}
-              validations={[required]}
-            />
-          </div>
-          <div className="mb-3" controlId="formBasicPassword">
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              value={this.state.password}
-              onChange={this.onChangePassword}
-              validations={[required]}
-            />
-          </div>
-          <CheckButton
-            ref={(c) => {
-              this.checkBtn = c;
-            }}
-          />
-        </Form> */}
           <Form
             onSubmit={this.handleLogin}
             ref={(c) => {
@@ -150,7 +112,6 @@ export default class Login extends Component {
                 onChange={this.onChangeUsername}
                 validations={[required]}
                 type="texte"
-                
               />
             </Form.Group>
 
@@ -162,7 +123,6 @@ export default class Login extends Component {
                 onChange={this.onChangePassword}
                 validations={[required]}
                 type="password"
-                
               />
             </Form.Group>
             <Button

@@ -9,7 +9,7 @@ import uploadService from "../../../../../services/uploadService";
 import { useImmer } from "use-immer";
 
 /* var bcrypt = require("bcryptjs"); */
-function FullScreen({ ModeChoice, changeMode }) {
+function FullScreen({ changeMode }) {
   var [State, setState] = useImmer([]);
 
   useEffect(() => {
@@ -34,10 +34,10 @@ function FullScreen({ ModeChoice, changeMode }) {
       }
       const fileName = "fullScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-      //delete file
       uploadService.delete(file);
       setState((draft) => {
         const dock = draft.find((dock) => dock.id === file.id);
+        dock.name = value.target.files[0].name
         dock.file = value.target.files[0];
         dock.fileName = fileName;
         dock.format = format;
@@ -65,21 +65,13 @@ function FullScreen({ ModeChoice, changeMode }) {
               <th>Overview</th>
             </tr>
           </thead>
-
           <tbody>
             {State.map((file, index) => (
               <tr key={file._id}>
                 <td>
-                  <p key={index}>{file.fileName}</p>
+                  <p key={index}>{file.name}</p>
                 </td>
                 <td>
-                  {/* <input
-                    id="file-input"
-                    type="file"
-                    onChange={(e) => onFileUpload(e, file)}
-                  />
-                  <img className="imgUpload" alt="test" src={file.path} /> */}
-
                   <input
                     type="file"
                     id={"file" + index}
@@ -98,12 +90,6 @@ function FullScreen({ ModeChoice, changeMode }) {
                 </td>
               </tr>
             ))}
-
-            {/*  <td>
-                <Button className="ButtonUp" variant="secondary">
-                  <MdOutlineDeleteOutline />
-                </Button>
-              </td> */}
           </tbody>
         </Table>
       </Form>
@@ -114,9 +100,6 @@ function FullScreen({ ModeChoice, changeMode }) {
       >
         <AiOutlineCheck />
       </Button>
-      {/* <Button className="buttonActive " variant="success" onClick={() => handleSubmit()}>
-        <FaSave />
-      </Button> */}
     </div>
   );
 }

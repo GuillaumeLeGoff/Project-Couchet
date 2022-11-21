@@ -1,5 +1,6 @@
 import axios from "axios";
-const URL_API = "http://localhost:4000";
+import Config from '../config.json'
+const URL_API = Config.SERVER_URL ;
 class AuthService {
     //get files 
   get() {
@@ -13,6 +14,7 @@ class AuthService {
       format: file.format,
       path: file.path,
       duration: file.duration,
+      name: file.name
     });
   }
   //delete file 

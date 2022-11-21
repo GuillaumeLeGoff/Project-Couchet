@@ -20,6 +20,7 @@ function Screen() {
       setState(result.data);
     });
   }
+
   function timeStopChange(e, time) {
     setState((draft) => {
       const veille = draft.find((veille) => veille._id === time._id);
@@ -46,12 +47,11 @@ function Screen() {
       });
     });
   }
+
   async function switchOff(){
     ModeService.choiceMode(0);
       window.location.reload();
     }
-
-  
 
   return (
     <div className="Truck">
@@ -84,13 +84,6 @@ function Screen() {
                   value={time.stop}
                 ></input>
               </td>
-              {/* <Button
-                  className="buttonActive"
-                  variant="success"
-                  onClick={() => saveTime(index)}
-                >
-                  <FaSave />
-                </Button> */}
             </tr>
           </tbody>
         ))}

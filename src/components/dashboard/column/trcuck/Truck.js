@@ -33,6 +33,7 @@ function Truck() {
       dock.plate = e.target.value;
     });
   }
+
   function HandleToggleNextDock(e, docks) {
     const id = docks.id;
     setNextTruck((draft) => {
@@ -41,6 +42,7 @@ function Truck() {
       dock.dockIndex = e.target.value;
     });
   }
+
   function HandleToggleLoading(e, docks) {
     const id = docks.id;
     setLoadingTruck((draft) => {
@@ -48,6 +50,7 @@ function Truck() {
       dock.plate = e.target.value;
     });
   }
+
   function HandleToggleLoadingDock(e, docks) {
     const id = docks.id;
     setLoadingTruck((draft) => {
@@ -55,8 +58,8 @@ function Truck() {
       dock.dockIndex = e.target.value;
     });
   }
-  async function DeleteNextTruck(docks){
-    
+
+  async function DeleteNextTruck(docks){ 
     setLoadingTruck((draft) => {
         const dock = draft.find((dock) => dock._id === docks._id);
         dock.dockIndex = 0;
@@ -106,6 +109,7 @@ function Truck() {
       postTruck(dock);
     });
   }
+
   //Au lancement mettre state en loading(true) au bout de 2 minutes
   async function waitLoading() {
     await getTruck();
@@ -126,7 +130,7 @@ function Truck() {
         setNextTruck(result.data.slice(6, 12));
       });
   }
-  //POST all
+  //POST all Trucks
   async function postTrucks() {
     LoadingTruck.forEach((truck) => {
       postTruck(truck);
@@ -135,7 +139,7 @@ function Truck() {
       postTruck(truck);
     });
   }
-  //POST one
+  //POST one Trucks
   async function postTruck(truck) {
     TruckService.postTruck(truck)
   }

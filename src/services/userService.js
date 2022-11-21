@@ -1,19 +1,20 @@
 import axios from 'axios';
 import authHeader from "./authHeader";
-const API_URL = 'http://localhost:4000/';
+import Config from '../config.json'
+const URL_API = Config.SERVER_URL ;
 
 class UserService {
     getPublicContent() {
-        return axios.get(API_URL + 'all');
+        return axios.get(URL_API + 'all');
     }
     getUserBoard() {
-        return axios.get(API_URL + 'user');
+        return axios.get(URL_API + 'user');
     }
     getAdminBoard() {
-        return axios.get(API_URL + 'admin');
+        return axios.get(URL_API + 'admin');
     }
     getSuperuserBoard() {
-        return axios.get(API_URL + 'superuser');
+        return axios.get(URL_API + 'superuser');
     }
 }
 
