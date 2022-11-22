@@ -33,6 +33,15 @@ class AuthService {
       console.log(res.data);
     });
   }
+  put(file){
+    axios.put(URL_API + "/file/" + file._id,{
+      duration: file.duration,
+    }).then((res) => {
+        console.log(res);
+        console.log(res.data);
+      });
+  }
+  
 }
 
 export default new AuthService();

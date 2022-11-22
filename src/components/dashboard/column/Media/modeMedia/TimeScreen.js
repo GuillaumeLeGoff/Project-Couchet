@@ -3,6 +3,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
 import { FaSave } from "react-icons/fa";
 import { MdOutlineDeleteOutline, MdFileDownload } from "react-icons/md";
+import { FcVideoFile } from "react-icons/fc";
 import { useImmer } from "use-immer";
 import authService from "../../../../../services/authService";
 import fileService from "../../../../../services/fileService";
@@ -12,8 +13,8 @@ import "../../../../../styles/App.css";
 function MultiScreen({ changeMode }) {
   var [State, setState] = useImmer([]);
 
-  const dragItem = useRef();
-  const dragOverItem = useRef();
+ /*  const dragItem = useRef();
+  const dragOverItem = useRef(); */
   useEffect(() => {
     getFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,7 +27,7 @@ function MultiScreen({ changeMode }) {
   }
 
   //////////////////DRAG AND DROP//////////////////
-  function dragStart(e, position) {
+  /* function dragStart(e, position) {
     dragItem.current = position;
   }
 
@@ -43,7 +44,7 @@ function MultiScreen({ changeMode }) {
     dragOverItem.current = null;
 
     setState(copyListItems);
-  }
+  } */
   ////////////////////////////////////////////////
 
   ////////////////// FILE///////////////////
@@ -66,14 +67,15 @@ function MultiScreen({ changeMode }) {
 
   async function saveAllFile() {
     console.log(State);
-    State.forEach(async (file) => {
-      fileService.delete(file);
-      fileService.post({
+    State.forEach((file) => {
+      /* fileService.delete(file); */
+      fileService.put(file);
+      /* fileService.post({
         duration: file.duration,
         fileName: file.fileName,
         path: file.path,
         format: file.format,
-      });
+      }); */
       window.location.reload();
     });
   }
@@ -104,6 +106,7 @@ function MultiScreen({ changeMode }) {
         saveFiles(dock);
       });
     }
+    window.location.reload();
   }
   function onTimeChange(value, file) {
     setState((draft) => {
@@ -138,11 +141,11 @@ function MultiScreen({ changeMode }) {
             State.map((file, index) => (
               <tbody key={file._id}>
                 <tr
-                  onDragStart={(e) => dragStart(e, index)}
+                 /*  onDragStart={(e) => dragStart(e, index)}
                   onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop}
+                  onDragEnd={drop} */
                   key={index}
-                  draggable
+                 /*  draggable */
                 >
                   {file.fileName === "écran Camion" ? (
                   <td key={index}><strong >Écran Camion</strong></td>
@@ -160,6 +163,7 @@ function MultiScreen({ changeMode }) {
                         id={"file" + index}
                         onChange={(e) => onFileChange(e, file)}
                         style={{ display: "none" }}
+                        accept="image/*,video/*"
                       />
                       <label htmlFor={"file" + index}>
                         {file.fileName === "file" ? (
@@ -169,11 +173,7 @@ function MultiScreen({ changeMode }) {
                         ) : (
                           <div>
                             {file.format === "mp4" ? (
-                              <img
-                              className="imgUpload"
-                              alt="test"
-                              src={file.path}
-                            />
+                             <FcVideoFile className="downloadIcone" />
                             ) : (
                               <img
                                 className="imgUpload"

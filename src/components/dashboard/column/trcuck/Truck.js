@@ -65,6 +65,7 @@ function Truck() {
         dock.dockIndex = 0;
         dock.plate = "";
         dock.state = true;
+        dock.flag = true;
         postTruck(dock)
       });
     
@@ -84,6 +85,7 @@ function Truck() {
           dock.dockIndex = 0;
           dock.plate = "";
           dock.state = true;
+          dock.flag = true;
           postTruck(dock);
         });
       }
@@ -92,6 +94,7 @@ function Truck() {
       const dock = draft.find((dock) => dock.id === id);
       dock.plate = "";
       dock.dockIndex = 0;
+      
       postTruck(dock);
     });
 

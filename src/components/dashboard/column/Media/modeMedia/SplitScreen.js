@@ -21,7 +21,7 @@ function Normale({ changeMode }) {
     });
   }
 
-  function onFileUpload(value, file) {
+  async function onFileUpload(value, file) {
     if (value.target.files[0] != null) {
       var text = "";
       var possible =
@@ -31,7 +31,9 @@ function Normale({ changeMode }) {
       }
       const fileName = "splitScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-      uploadService.delete(file);
+      if (file.fileName != "file") {
+        uploadService.delete(file);
+      }
       setState((draft) => {
         const dock = draft.find((dock) => dock._id === file._id);
         dock.name = value.target.files[0].name
@@ -84,6 +86,7 @@ function Normale({ changeMode }) {
                       id={"file" + index}
                       onChange={(e) => onFileUpload(e, file)}
                       style={{ display: "none" }}
+                      accept="image/*,video/*"
                     />
                     <label htmlFor={"file" + index}>
                       {file.fileName == "file" ? (

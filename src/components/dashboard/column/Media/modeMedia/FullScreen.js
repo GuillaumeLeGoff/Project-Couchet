@@ -23,7 +23,7 @@ function FullScreen({ changeMode }) {
     });
   }
 
-  function onFileUpload(value, file) {
+  async function onFileUpload(value, file) {
     //Nom fichier aléatoire
     if (value.target.files[0] != null) {
       var text = "";
@@ -34,7 +34,9 @@ function FullScreen({ changeMode }) {
       }
       const fileName = "fullScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-      uploadService.delete(file);
+      if (file.fileName != "file") {
+        uploadService.delete(file);
+      }
       setState((draft) => {
         const dock = draft.find((dock) => dock.id === file.id);
         dock.name = value.target.files[0].name
@@ -46,6 +48,7 @@ function FullScreen({ changeMode }) {
         saveFiles(dock);
       });
     }
+    window.location.reload();
   }
   async function saveFiles(file) {
     // eslint-disable-next-line eqeqeq
@@ -77,6 +80,7 @@ function FullScreen({ changeMode }) {
                     id={"file" + index}
                     onChange={(e) => onFileUpload(e, file)}
                     style={{ display: "none" }}
+                    accept="image/*,video/*"
                   />
                   <label htmlFor={"file" + index}>
                     {file.fileName == "file" ? (

@@ -4,7 +4,7 @@ const URL_API = Config.SERVER_URL ;
 class ModeService {
   choiceMode(mode) {
     return axios
-      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
+      .put(URL_API + "/mode/637a54bc1b9131702da13698", {
         activeMode: mode,
       })
       .then((res) => {
