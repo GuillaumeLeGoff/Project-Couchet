@@ -21,18 +21,28 @@ function Media() {
   async function getMode() {
     ModeService.getMode().then((result) => {
       setModeChoice(result.data);
-      nav(result.data[0].activeMode);
+      nav(result.data[0].mode);
     });
+    
   }
   
   async function changeMode(mode) {
     ModeService.choiceMode(mode);
     getMode();
+    window.location.reload();
   }
 
+  async function choiceVisuMode(mode) {
+    ModeService.choiceVisuMode(mode);
+    
+  }
+
+
   function nav(mode) {
+    choiceVisuMode(mode)
     if (mode === "1") {
       setNavMode(<SplitScreen changeMode={changeMode} />);
+
     }
 
     if (mode === "2") {
@@ -53,18 +63,18 @@ function Media() {
             <Nav.Link eventKey="1" onClick={() => nav("1")}>
               {" "}
               {Choice.activeMode === "1" ? (
-                <strong className="ModeChoice">3 images </strong>
+                <strong className="ModeChoice">3 Média </strong>
               ) : (
-                "3 Images"
+                "3 Média"
               )}
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link eventKey="2" onClick={() => nav("2")}>
               {Choice.activeMode === "2" ? (
-                <strong className="ModeChoice">1 Image</strong>
+                <strong className="ModeChoice">1 Média</strong>
               ) : (
-                "1 Image"
+                "1 Média"
               )}
             </Nav.Link>
           </Nav.Item>

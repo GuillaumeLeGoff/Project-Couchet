@@ -13,7 +13,7 @@ import logo from "../assets/Logo_JDE.png";
 
 function Header({ token }) {
   function logOut() {
-    ModeService.choiceMode(0);
+    ModeService.shutdownMode(0);
     AuthService.logout();
     window.location.reload();
   }
@@ -21,7 +21,12 @@ function Header({ token }) {
     <MDBNavbar className="header">
       <MDBContainer className="headerContainer" fluid>
         <img src={logo} height="35" alt="JDE Logo" />
-        <h5 className="title">Dashboard</h5>
+        {token === null ? (
+            <h5 className="title">Login</h5>
+          ) : (
+            <h5 className="title">Dashboard</h5>
+          )}
+        
         <MDBInputGroup tag="form" className="d-flex w-auto mb-3">
           {token === null ? (
             ""

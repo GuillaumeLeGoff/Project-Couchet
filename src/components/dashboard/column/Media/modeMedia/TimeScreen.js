@@ -121,12 +121,14 @@ function MultiScreen({ changeMode }) {
     }
     fileService.delete(file);
     getFile();
+    window.location.reload();
   }
 
   /////////////////////////////////////////////////
 
   return (
     <div>
+      <p>format des medias: 192 x 433  </p>
       <Form>
         <Table striped>
           <thead>

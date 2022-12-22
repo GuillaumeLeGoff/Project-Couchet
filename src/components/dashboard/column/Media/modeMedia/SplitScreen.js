@@ -59,6 +59,7 @@ function Normale({ changeMode }) {
 
   return (
     <div>
+      <p>format des medias: 192 x 145  </p>
       <Form>
         <Table striped>
           <thead>

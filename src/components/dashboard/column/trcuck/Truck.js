@@ -10,7 +10,9 @@ import React, { useEffect } from "react";
 import Come from "./State/Come";
 import Loading from "./State/Loading";
 import Wait from "./State/Wait";
+import moment from "moment";
 import TruckService from "../../../../services/truckService"
+import veilleService from "../../../../services/veilleService";
 <link
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
   rel="stylesheet"
@@ -19,13 +21,26 @@ import TruckService from "../../../../services/truckService"
 function Truck() {
   useEffect(() => {
     waitLoading();
+    getHeure();
+    getDate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  var [Heure, setHeure] = useImmer([]);
+  var [Date, setDate] = useImmer([]);
   var [LoadingTruck, setLoadingTruck] = useImmer([]);
   var [NextTruck, setNextTruck] = useImmer([]);
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+
+  async function getHeure() {
+    var date = moment().utcOffset("+01:00").format();
+    setHeure(date.substring(11, 16));
+    
+  }
+  async function getDate() {
+    var date = moment().utcOffset("+01:00").format("YYYY-MM-DD");
+    setDate(date);
+  }
   function HandleToggleNext(e, docks) {
     const id = docks.id;
     setNextTruck((draft) => {
@@ -105,22 +120,26 @@ function Truck() {
       dock.state = false;
       postTruck(dock);
     });
-    await delay(120000);
+    window.location.reload();
+   /*  await delay(120000);
     setLoadingTruck((draft) => {
       const dock = draft.find((dock) => dock.id === id2);
       dock.state = true;
       postTruck(dock);
-    });
+    }); */
+    
   }
 
   //Au lancement mettre state en loading(true) au bout de 2 minutes
   async function waitLoading() {
     await getTruck();
+   
     await delay(120000);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i <= 5; i++) {
       setLoadingTruck((draft) => {
         const dock = draft.find((dock) => dock.id === i);
         dock.state = true;
+        
         postTruck(dock);
       });
     }
@@ -141,6 +160,7 @@ function Truck() {
     NextTruck.forEach((truck) => {
       postTruck(truck);
     });
+    veilleService.Heure(Heure, Date);
   }
   //POST one Trucks
   async function postTruck(truck) {
@@ -180,7 +200,7 @@ function Truck() {
                     value={docks.plate}
                   />
                 </td>
-                <td>{docks.state ? <Loading /> : <Come />}</td>
+                <td>{docks.state ?  <Loading plate= {docks.plate}  />  : <Come />}</td>
                 <td>
                   <Button
                     className="ButtonUp"

@@ -17,19 +17,26 @@ class VeilleService {
     return axios.get(URL_API + "/veille", JSON.stringify(data));
   }
 
-  Heure(file) {
-    console.log(file._id);
+  Heure(heure,date) {
+    console.log(heure);
+    console.log(date);
     return axios
-      .put(URL_API + "/heure/" + file._id, {
-        heure: file.heure,
+      .post(URL_API + "/heure", {
+        heure: heure,
+        date: date
       })
       .then((result) => {
         console.log(result.data);
       });
   }
+ 
   getHeure() {
     const data = {};
-    return axios.get(URL_API + "/heure", JSON.stringify(data));
+    return axios.get(URL_API + "/heure", data);
+  }
+  getDate() {
+    const data = {};
+    return axios.get(URL_API + "/date", data);
   }
 }
 export default new VeilleService();

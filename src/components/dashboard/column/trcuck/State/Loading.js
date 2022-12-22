@@ -1,10 +1,14 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../../../../styles/Main.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../../../../../styles/Main.css";
 
-function Loading() {
+function Loading(plate) {
   return (
-    <div >
-     <span className="Loading">LOADING</span>
+    <div>
+      {plate.plate != "" ? (
+        <span className="Loading">LOADING</span>
+      ) : (
+        <span></span>
+      )}
     </div>
   );
 }

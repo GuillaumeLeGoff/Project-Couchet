@@ -68,6 +68,7 @@ export default class Login extends Component {
     );
   }
   handleLogin(e) {
+    var  err = false
     e.preventDefault();
     this.setState({
       message: "",
@@ -78,8 +79,10 @@ export default class Login extends Component {
       () => {
         console.log("OK");
         window.location.reload();
+        this.err = false
       },
       (error) => {
+        err = true
         const resMessage =
           (error.response &&
             error.message.data &&
@@ -106,7 +109,7 @@ export default class Login extends Component {
             className="LoginMargin"
           >
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Enter Id</Form.Label>
+              <Form.Label>Nom d'utilisateur</Form.Label>
               <Form.Control
                 value={this.state.username}
                 onChange={this.onChangeUsername}
@@ -116,7 +119,7 @@ export default class Login extends Component {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Mot de passe</Form.Label>
               <Form.Control
                 name="password"
                 value={this.state.password}
@@ -125,6 +128,13 @@ export default class Login extends Component {
                 type="password"
               />
             </Form.Group>
+            {this.state.message && (
+                            <div className="form-group">
+                                <div className="alert alert-danger" role="alert">
+                                    {this.state.message}
+                                </div>
+                            </div>
+                        )}
             <Button
               ref={(c) => {
                 this.checkBtn = c;
@@ -132,7 +142,7 @@ export default class Login extends Component {
               variant="success"
               type="submit"
             >
-              Submit
+              Connexion
             </Button>
           </Form>
         </div>

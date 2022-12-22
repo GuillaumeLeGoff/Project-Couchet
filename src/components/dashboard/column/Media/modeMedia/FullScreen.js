@@ -60,6 +60,7 @@ function FullScreen({ changeMode }) {
 
   return (
     <div>
+      <p>format du media: 192 x 433  </p>
       <Form>
         <Table striped>
           <thead>

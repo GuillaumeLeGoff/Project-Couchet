@@ -1,8 +1,8 @@
 .App {
   margin: 0;
-	min-height: 100vh;
-	display: grid;
-	grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
 .App-logo {
@@ -30,7 +30,15 @@
 .App-link {
   color: #61dafb;
 }
+.heureP {
+  margin-top: revert;
+}
 
+.heure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -49,38 +57,39 @@
 }
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
+  font-family: "Roboto", sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
-.titleColumn{
-  color: #52291B
+.titleColumn {
+  color: #52291b;
 }
 
 .Inputtruck:focus {
   border-color: #4b4a4a;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(66, 66, 66, 0.6);
-  background-color:#7c838a;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(66, 66, 66, 0.6);
+  background-color: #7c838a;
 }
 
-.textWhite{
+.textWhite {
   color: white;
 }
-.row2{
+.row2 {
   --bs-gutter-x: 0;
 }
-.inputDock{
+.inputDock {
   width: 30%;
 }
-.inputPlate{
+.inputPlate {
   width: 45%;
 }
 
-.imgUpload{
+.imgUpload {
   width: 100px;
 }
 
-.downloadIcone{
+.downloadIcone {
   font-size: 50px;
 }
