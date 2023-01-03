@@ -13,7 +13,6 @@ import logo from "../assets/Logo_JDE.png";
 
 function Header({ token }) {
   function logOut() {
-    ModeService.shutdownMode(0);
     AuthService.logout();
     window.location.reload();
   }

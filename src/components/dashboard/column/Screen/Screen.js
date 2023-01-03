@@ -4,6 +4,7 @@ import { Button, Table } from "react-bootstrap";
 import { FaSave } from "react-icons/fa";
 import { RiShutDownLine } from "react-icons/ri";
 import { useImmer } from "use-immer";
+import Preview from "./Preview";
 
 
 import ModeService from "../../../../services/modeService";
@@ -18,6 +19,7 @@ function Screen() {
     getVeille();
     
     getMode();
+    
    
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,17 +71,20 @@ function Screen() {
   async function switchOff() {
     getMode();
     console.log(mode[0].activeMode);
-    if (mode[0].activeMode == 0) {
+    if (mode[0].activeMode == 4) {
       ModeService.choiceMode2(mode[0].modeBack);
     } else {
-      ModeService.shutdownMode(0);
+      ModeService.shutdownMode();
     }
     window.location.reload();
   }
 
   return (
+    
     <div className="Truck">
       <h5 className="titleColumn">Écran</h5>
+      <Preview/>
+      
 
       {/* <div className="heure">
         <input
@@ -111,11 +116,12 @@ function Screen() {
                 ></input>
               </td>
               <td>
-                <input
+                {index === 2 ? '' : <input
                   type="time"
                   onChange={(e) => timeStopChange(e, time)}
                   value={time.stop}
-                ></input>
+                ></input>}
+                
               </td>
             </tr>
           </tbody>
@@ -124,7 +130,7 @@ function Screen() {
 
       {mode.map((mode1) => (
         <div key={mode1._id}>
-          {mode1.activeMode == 0 ? (
+          {mode1.activeMode == 4 ? (
             <div>
               <Button
                 className="buttonActive margin50"
@@ -161,6 +167,8 @@ function Screen() {
           )}
         </div>
       ))}
+        
+
     </div>
   );
 }

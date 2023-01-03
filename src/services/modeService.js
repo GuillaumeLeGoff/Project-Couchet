@@ -4,7 +4,7 @@ const URL_API = Config.SERVER_URL ;
 class ModeService {
   choiceMode(mode) {
     return axios
-      .put(URL_API + "/mode/637a54bc1b9131702da13698", {
+      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
         activeMode: mode,
         mode: mode,
         modeBack: mode,
@@ -17,7 +17,7 @@ class ModeService {
 
   choiceMode2(mode) {
     return axios
-      .put(URL_API + "/mode/637a54bc1b9131702da13698", {
+      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
         activeMode: mode,
       })
       .then((res) => {
@@ -25,10 +25,10 @@ class ModeService {
         console.log(res.data);
       });
   }
-  shutdownMode(mode) {
+  shutdownMode() {
     return axios
-      .put(URL_API + "/mode/637a54bc1b9131702da13698", {
-        activeMode: 0,
+      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
+        activeMode: 4,
       })
       .then((res) => {
         console.log(res);
@@ -38,7 +38,7 @@ class ModeService {
 
   choiceVisuMode(mode) {
     return axios
-      .put(URL_API + "/mode/637a54bc1b9131702da13698", {
+      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
         mode: mode
       })
       .then((res) => {
