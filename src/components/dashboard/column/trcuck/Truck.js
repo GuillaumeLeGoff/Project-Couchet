@@ -13,10 +13,7 @@ import Wait from "./State/Wait";
 import moment from "moment";
 import TruckService from "../../../../services/truckService"
 import veilleService from "../../../../services/veilleService";
-<link
-  href="https://fonts.googleapis.com/icon?family=Material+Icons"
-  rel="stylesheet"
-></link>;
+
 
 function Truck() {
   useEffect(() => {
@@ -121,13 +118,6 @@ function Truck() {
       postTruck(dock);
     });
     window.location.reload();
-   /*  await delay(120000);
-    setLoadingTruck((draft) => {
-      const dock = draft.find((dock) => dock.id === id2);
-      dock.state = true;
-      postTruck(dock);
-    }); */
-    
   }
 
   //Au lancement mettre state en loading(true) au bout de 2 minutes

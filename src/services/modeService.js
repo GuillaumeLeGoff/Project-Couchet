@@ -1,6 +1,6 @@
 import axios from "axios";
-import Config from '../config.json'
-const URL_API = Config.SERVER_URL ;
+import Config from "../config.json";
+const URL_API = Config.SERVER_URL;
 class ModeService {
   choiceMode(mode) {
     return axios
@@ -8,6 +8,7 @@ class ModeService {
         activeMode: mode,
         mode: mode,
         modeBack: mode,
+        modeChange: true,
       })
       .then((res) => {
         console.log(res);
@@ -19,16 +20,28 @@ class ModeService {
     return axios
       .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
         activeMode: mode,
+        modeChange: true,
       })
       .then((res) => {
         console.log(res);
         console.log(res.data);
       });
   }
-  shutdownMode() {
+
+  modeChange() {
     return axios
       .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
-        activeMode: 4,
+        modeChange: true,
+      })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      });
+  }
+  shutdownMode(flag) {
+    return axios
+      .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
+        flag: flag
       })
       .then((res) => {
         console.log(res);
@@ -39,7 +52,7 @@ class ModeService {
   choiceVisuMode(mode) {
     return axios
       .put(URL_API + "/mode/6368fc0a41898f80900da97b", {
-        mode: mode
+        mode: mode,
       })
       .then((res) => {
         console.log(res);

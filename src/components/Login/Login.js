@@ -28,6 +28,7 @@ export default class Login extends Component {
       message: "",
     };
   }
+
   onChangeUsername(e) {
     this.setState({
       username: e.target.value,
@@ -67,8 +68,8 @@ export default class Login extends Component {
       }
     );
   }
+  
   handleLogin(e) {
-    var  err = false
     e.preventDefault();
     this.setState({
       message: "",
@@ -77,12 +78,10 @@ export default class Login extends Component {
 
     AuthService.login(this.state.username, this.state.password).then(
       () => {
-        console.log("OK");
         window.location.reload();
-        this.err = false
+        this.err = false;
       },
       (error) => {
-        err = true
         const resMessage =
           (error.response &&
             error.message.data &&
@@ -129,12 +128,12 @@ export default class Login extends Component {
               />
             </Form.Group>
             {this.state.message && (
-                            <div className="form-group">
-                                <div className="alert alert-danger" role="alert">
-                                    {this.state.message}
-                                </div>
-                            </div>
-                        )}
+              <div className="form-group">
+                <div className="alert alert-danger" role="alert">
+                  {this.state.message}
+                </div>
+              </div>
+            )}
             <Button
               ref={(c) => {
                 this.checkBtn = c;

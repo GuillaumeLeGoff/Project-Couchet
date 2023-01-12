@@ -6,7 +6,7 @@ import { MDBFooter } from "mdb-react-ui-kit";
 
 function Footer() {
   return (
-    <MDBFooter  className="footer ">
+    <MDBFooter className="footer ">
       <div
         className=" textWhite text-center p-3 "
         style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}

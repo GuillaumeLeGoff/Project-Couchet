@@ -9,7 +9,6 @@ import ModeService from "../../../../services/modeService";
 import { useEffect } from "react";
 
 function Media() {
-
   const [ModeChoice, setModeChoice] = useState([]);
   const [NavMode, setNavMode] = useState();
 
@@ -23,9 +22,8 @@ function Media() {
       setModeChoice(result.data);
       nav(result.data[0].mode);
     });
-    
   }
-  
+
   async function changeMode(mode) {
     ModeService.choiceMode(mode);
     getMode();
@@ -34,21 +32,16 @@ function Media() {
 
   async function choiceVisuMode(mode) {
     ModeService.choiceVisuMode(mode);
-    
   }
 
-
   function nav(mode) {
-    choiceVisuMode(mode)
+    choiceVisuMode(mode);
     if (mode === "1") {
       setNavMode(<SplitScreen changeMode={changeMode} />);
-
     }
-
     if (mode === "2") {
       setNavMode(<FullScreen changeMode={changeMode} />);
     }
-
     if (mode === "3") {
       setNavMode(<TimeScreen changeMode={changeMode} />);
     }

@@ -1,10 +1,11 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../../../../styles/Main.css";
+import React from "react";
 
 function Loading(plate) {
   return (
     <div>
-      {plate.plate != "" ? (
+      {plate.plate !== '' ? (
         <span className="Loading">LOADING</span>
       ) : (
         <span></span>

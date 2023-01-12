@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineFileAdd } from "react-icons/ai";
 import { FaSave } from "react-icons/fa";
@@ -13,8 +13,6 @@ import "../../../../../styles/App.css";
 function MultiScreen({ changeMode }) {
   var [State, setState] = useImmer([]);
 
- /*  const dragItem = useRef();
-  const dragOverItem = useRef(); */
   useEffect(() => {
     getFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,28 +24,6 @@ function MultiScreen({ changeMode }) {
     });
   }
 
-  //////////////////DRAG AND DROP//////////////////
-  /* function dragStart(e, position) {
-    dragItem.current = position;
-  }
-
-  function dragEnter(e, position) {
-    dragOverItem.current = position;
-  }
-
-  function drop(e) {
-    const copyListItems = [...State];
-    const dragItemContent = copyListItems[dragItem.current];
-    copyListItems.splice(dragItem.current, 1);
-    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-    dragItem.current = null;
-    dragOverItem.current = null;
-
-    setState(copyListItems);
-  } */
-  ////////////////////////////////////////////////
-
-  ////////////////// FILE///////////////////
   function NewFile() {
     const file = {
       fileName: "file",
@@ -58,8 +34,8 @@ function MultiScreen({ changeMode }) {
   }
 
   async function saveFiles(file) {
-    // eslint-disable-next-line eqeqeq
-    if (file.fileName != "file") {
+   
+    if (file.fileName !== "file") {
       uploadService.upload(file);
     }
     fileService.update(file);
@@ -68,21 +44,14 @@ function MultiScreen({ changeMode }) {
   async function saveAllFile() {
     console.log(State);
     State.forEach((file) => {
-      /* fileService.delete(file); */
       fileService.put(file);
-      /* fileService.post({
-        duration: file.duration,
-        fileName: file.fileName,
-        path: file.path,
-        format: file.format,
-      }); */
       window.location.reload();
     });
   }
 
   async function onFileChange(value, file, index) {
-    console.log(value.target.files[0]);
     var text = "";
+    var duration = 0;
     var possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 10; i++) {
@@ -90,30 +59,61 @@ function MultiScreen({ changeMode }) {
     }
     const fileName = "timeScreen_" + text;
     const format = value.target.files[0].type.split("/").pop();
-    if (value.target.files[0] != null) {
-      // eslint-disable-next-line eqeqeq
-      if (file.fileName != "file") {
-        uploadService.delete(file);
-      }
-      setState((draft) => {
-        const dock = draft.find((dock) => dock._id === file._id);
-        dock.file = value.target.files[0];
-        dock.name = value.target.files[0].name;
-        dock.fileName = fileName;
-        dock.format = format;
-        dock.user = authService.getCurrentUser().username;
-        dock.path = "/media/" + fileName + "." + format;
-        saveFiles(dock);
+    if (format === "mp4") {
+      const url = URL.createObjectURL(value.target.files[0]);
+      const video = document.createElement("video");
+      video.src = url;
+
+      video.addEventListener("loadedmetadata", () => {
+        duration = video.duration;
+        duration = duration.toString().split(".");
+        console.log(duration);
+        if (value.target.files[0] != null) {
+          if (file.fileName !== "file") {
+            uploadService.delete(file);
+          }
+          setState((draft) => {
+            console.log(duration);
+            const dock = draft.find((dock) => dock._id === file._id);
+            dock.file = value.target.files[0];
+            dock.name = value.target.files[0].name;
+            dock.fileName = fileName;
+            dock.format = format;
+            dock.user = authService.getCurrentUser().username;
+            dock.path = "/media/" + fileName + "." + format;
+            dock.duration = duration[0];
+            saveFiles(dock);
+          });
+        }
       });
+    } else {
+      if (value.target.files[0] != null) {
+        if (file.fileName !== "file") {
+          uploadService.delete(file);
+        }
+        setState((draft) => {
+          console.log(duration);
+          const dock = draft.find((dock) => dock._id === file._id);
+          dock.file = value.target.files[0];
+          dock.name = value.target.files[0].name;
+          dock.fileName = fileName;
+          dock.format = format;
+          dock.user = authService.getCurrentUser().username;
+          dock.path = "/media/" + fileName + "." + format;
+          dock.duration = duration[0];
+          saveFiles(dock);
+        });
+      }
     }
-    window.location.reload();
   }
+
   function onTimeChange(value, file) {
     setState((draft) => {
       const dock = draft.find((dock) => dock._id === file._id);
       dock.duration = value.target.valueAsNumber;
     });
   }
+
   async function DeleteFile(file) {
     // eslint-disable-next-line eqeqeq
     if (file.fileName != "file") {
@@ -124,11 +124,9 @@ function MultiScreen({ changeMode }) {
     window.location.reload();
   }
 
-  /////////////////////////////////////////////////
-
   return (
     <div>
-      <p>format des medias: 192 x 433  </p>
+      <p>format des medias: 192 x 433 </p>
       <Form>
         <Table striped>
           <thead>
@@ -142,24 +140,20 @@ function MultiScreen({ changeMode }) {
           {State &&
             State.map((file, index) => (
               <tbody key={file._id}>
-                <tr
-                 /*  onDragStart={(e) => dragStart(e, index)}
-                  onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop} */
-                  key={index}
-                 /*  draggable */
-                >
+                <tr key={index}>
                   {file.fileName === "écran Camion" ? (
-                  <td key={index}><strong >Écran Camion</strong></td>
+                    <td key={index}>
+                      <strong>Écran Camion</strong>
+                    </td>
                   ) : (
                     <td key={index}>{file.name}</td>
-                    )}
-
+                  )}
 
                   {file.fileName === "écran Camion" ? (
                     <td></td>
                   ) : (
                     <td>
+                      
                       <input
                         type="file"
                         id={"file" + index}
@@ -175,7 +169,7 @@ function MultiScreen({ changeMode }) {
                         ) : (
                           <div>
                             {file.format === "mp4" ? (
-                             <FcVideoFile className="downloadIcone" />
+                              <FcVideoFile className="downloadIcone" />
                             ) : (
                               <img
                                 className="imgUpload"

@@ -6,10 +6,6 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
 
-<link
-  href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-  rel="stylesheet"
-/>;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

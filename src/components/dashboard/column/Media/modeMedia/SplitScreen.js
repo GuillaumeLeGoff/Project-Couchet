@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { MdFileDownload } from "react-icons/md";
@@ -14,6 +14,9 @@ function Normale({ changeMode }) {
     getFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   async function getFile() {
     fileService.get().then((result) => {
@@ -31,7 +34,7 @@ function Normale({ changeMode }) {
       }
       const fileName = "splitScreen_" + text;
       const format = value.target.files[0].type.split("/").pop();
-      if (file.fileName != "file") {
+      if (file.fileName !== "file") {
         uploadService.delete(file);
       }
       setState((draft) => {
@@ -42,16 +45,16 @@ function Normale({ changeMode }) {
         dock.format = format;
         dock.user = authService.getCurrentUser().username;
         dock.path = "/media/" + fileName + "." + format;
-        /* dock.select = true; */
         saveFiles(dock);
       });
     }
+    await sleep(1000);
     window.location.reload();
   }
+  
   async function saveFiles(file) {
     // eslint-disable-next-line eqeqeq
     if (file.fileName != "file") {
-      console.log("upload");
       uploadService.upload(file);
     }
     fileService.update(file);
@@ -73,11 +76,7 @@ function Normale({ changeMode }) {
             State.map((file, index) => (
               <tbody key={file._id}>
                 <tr
-                  /*  onDragStart={(e) => dragStart(e, index)}
-                  onDragEnter={(e) => dragEnter(e, index)}
-                  onDragEnd={drop} */
                   key={file._id}
-                  /* draggable */
                 >
                   <td>{file.name}</td>
 
@@ -87,10 +86,10 @@ function Normale({ changeMode }) {
                       id={"file" + index}
                       onChange={(e) => onFileUpload(e, file)}
                       style={{ display: "none" }}
-                      accept="image/*,video/*"
+                      accept="image/*"
                     />
                     <label htmlFor={"file" + index}>
-                      {file.fileName == "file" ? (
+                      {file.fileName === "file" ? (
                         <span className="fa fa-edit edit-icon">
                           <MdFileDownload className="downloadIcone" />
                         </span>
@@ -100,19 +99,6 @@ function Normale({ changeMode }) {
                     </label>
                   </td>
                   <td>
-                    {/*  <Button
-                      className="ButtonUp"
-                      variant="secondary"
-                      onClick={(e) => DeleteFile(e, file)}
-                    >
-                      <MdOutlineDeleteOutline />
-                    </Button>
-                    {file.select ? <Button
-                      onClick={() => handleSubmit(index)}
-                      className="btn-large waves-effect blue-grey darken-4 waves-orange"
-                    >
-                      Ajouter ce média
-                    </Button> : ""} */}
                   </td>
                 </tr>
               </tbody>
@@ -127,9 +113,6 @@ function Normale({ changeMode }) {
       >
         <AiOutlineCheck />
       </Button>
-      {/* <Button variant="primary" type="submit" onClick={(e) => NewFile()}>
-        Ajouter Document
-      </Button> */}
     </div>
   );
 }

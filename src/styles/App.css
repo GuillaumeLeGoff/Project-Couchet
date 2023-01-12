@@ -93,3 +93,22 @@ body {
 .downloadIcone {
   font-size: 50px;
 }
+.switchBouton{
+  align-items: center;
+  box-shadow:none;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+.p{
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+
+.horaire{
+
+}
+
+.horaire input[disabled]{
+  background-color: gray;
+  cursor: not-allowed;
+}
